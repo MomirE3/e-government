@@ -1,8 +1,41 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/e-government/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/e-government/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/e-government",
+  "projects": {
+    "e-government": {
+      "type": "application",
+      "root": "apps/e-government",
+      "entryFile": "main",
+      "sourceRoot": "apps/e-government/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/e-government/tsconfig.app.json"
+      }
+    },
+    "mup-gradjani-service": {
+      "type": "application",
+      "root": "apps/mup-gradjani-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/mup-gradjani-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/mup-gradjani-service/tsconfig.app.json"
+      }
+    },
+    "zavod-za-statistiku-service": {
+      "type": "application",
+      "root": "apps/zavod-za-statistiku-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/zavod-za-statistiku-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/zavod-za-statistiku-service/tsconfig.app.json"
+      }
+    }
   }
 }
