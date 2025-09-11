@@ -1,0 +1,66 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: ./apps/e-government/Dockerfile
+    container_name: gateway
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mup-service
+      - zavod-service
+    environment:
+      - PORT=3000
+
+  mup-service:
+    build:
+      context: .
+      dockerfile: ./apps/mup-gradjani-service/Dockerfile
+    container_name: mup-service
+    ports:
+      - '3001:3000'
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/e_gov
+    depends_on:
+      - postgres
+
+  zavod-service:
+    build:
+      context: .
+      dockerfile: ./apps/zavod-za-statistiku-service/Dockerfile
+    container_name: zavod-service
+    ports:
+      - '3002:3000'
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/e_gov
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: e_gov
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

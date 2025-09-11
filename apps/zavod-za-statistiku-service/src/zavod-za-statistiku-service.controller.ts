@@ -3,7 +3,9 @@ import { ZavodZaStatistikuServiceService } from './zavod-za-statistiku-service.s
 
 @Controller()
 export class ZavodZaStatistikuServiceController {
-  constructor(private readonly zavodZaStatistikuServiceService: ZavodZaStatistikuServiceService) {}
+  constructor(
+    private readonly zavodZaStatistikuServiceService: ZavodZaStatistikuServiceService,
+  ) {}
 
   @Get()
   getHello(): string {
