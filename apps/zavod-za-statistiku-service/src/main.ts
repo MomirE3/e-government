@@ -3,6 +3,12 @@ import { ZavodZaStatistikuServiceModule } from './zavod-za-statistiku-service.mo
 
 async function bootstrap() {
   const app = await NestFactory.create(ZavodZaStatistikuServiceModule);
-  await app.listen(process.env.port ?? 8082);
+
+  // Omogućiti CORS za development
+  app.enableCors();
+
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  console.log(`Zavod za statistiku Service is running on port ${port}`);
 }
-bootstrap();
+void bootstrap();

@@ -3,7 +3,9 @@ import { MupGradjaniServiceService } from './mup-gradjani-service.service';
 
 @Controller()
 export class MupGradjaniServiceController {
-  constructor(private readonly mupGradjaniServiceService: MupGradjaniServiceService) {}
+  constructor(
+    private readonly mupGradjaniServiceService: MupGradjaniServiceService,
+  ) {}
 
   @Get()
   getHello(): string {

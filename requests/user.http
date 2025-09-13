@@ -1,0 +1,9 @@
+### Kreiraj korisnika u MUP servisu
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "email": "pera@example.com",
+  "name": "Pera Peric"
+}
+

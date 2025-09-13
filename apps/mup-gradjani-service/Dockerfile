@@ -1,8 +1,18 @@
 FROM node:20-alpine
 WORKDIR /app
-COPY ../../package*.json ./
+
+COPY package*.json ./
+
+COPY nest-cli.json ./
+COPY tsconfig*.json ./
+
 RUN npm install
+
 COPY . .
-RUN npm run build
+
+RUN npx prisma generate --schema=apps/mup-gradjani-service/prisma/schema.prisma
+
+RUN npx nest build mup-gradjani-service
+
 EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:prod:mup"]

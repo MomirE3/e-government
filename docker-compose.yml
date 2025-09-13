@@ -21,9 +21,9 @@ services:
       - '3001:3000'
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://admin:admin@postgres:5432/e_gov
+      - DATABASE_URL=postgresql://admin:admin@postgres-mup:5432/mup_gradjani
     depends_on:
-      - postgres
+      - postgres-mup
 
   zavod-service:
     build:
@@ -34,33 +34,47 @@ services:
       - '3002:3000'
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://admin:admin@postgres:5432/e_gov
+      - DATABASE_URL=postgresql://admin:admin@postgres-zavod:5432/zavod_za_statistiku
     depends_on:
-      - postgres
+      - postgres-zavod
 
-  postgres:
+  postgres-mup:
     image: postgres:15
-    container_name: postgres-db
+    container_name: postgres-mup-db
     restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: e_gov
+      POSTGRES_DB: mup_gradjani
     ports:
       - '5432:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_mup_data:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
+  postgres-zavod:
+    image: postgres:15
+    container_name: postgres-zavod-db
+    restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: zavod_za_statistiku
     ports:
-      - '5050:80'
-    depends_on:
-      - postgres
+      - '5433:5432'
+    volumes:
+      - postgres_zavod_data:/var/lib/postgresql/data
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - '5050:80'
+  #   depends_on:
+  #     - postgres
 
 volumes:
-  postgres_data:
+  postgres_mup_data:
+  postgres_zavod_data:
