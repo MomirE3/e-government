@@ -23,6 +23,7 @@ services:
       - DATABASE_URL=postgresql://admin:admin@postgres-mup:5432/mup_gradjani
     depends_on:
       - postgres-mup
+    restart: on-failure
 
   zavod-service:
     build:
@@ -36,10 +37,11 @@ services:
       - DATABASE_URL=postgresql://admin:admin@postgres-zavod:5432/zavod_za_statistiku
     depends_on:
       - postgres-zavod
+    restart: on-failure
 
   postgres-mup:
     image: postgres:15
-    container_name: postgres-mup-db
+    container_name: postgres-mup
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -52,7 +54,7 @@ services:
 
   postgres-zavod:
     image: postgres:15
-    container_name: postgres-zavod-db
+    container_name: postgres-zavod
     restart: always
     environment:
       POSTGRES_USER: admin
