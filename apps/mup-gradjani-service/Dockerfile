@@ -14,5 +14,4 @@ RUN npx nest build mup-gradjani-service
 
 EXPOSE 3000
 
-# Додати script који покреће миграције па апликацију
 CMD ["sh", "-c", "npx prisma migrate deploy --schema=apps/mup-gradjani-service/prisma/schema.prisma && npm run start:prod:mup"]

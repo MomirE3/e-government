@@ -3,7 +3,7 @@ POST http://localhost:3001/users
 Content-Type: application/json
 
 {
-  "email": "pera@example.com",
+  "email": "pera2@example.com",
   "name": "Pera Peric"
 }
 

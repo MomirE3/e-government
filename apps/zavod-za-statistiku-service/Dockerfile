@@ -14,6 +14,5 @@ RUN npx nest build zavod-za-statistiku-service
 
 EXPOSE 3000
 
-# Додати script који покреће миграције па апликацију
 CMD ["sh", "-c", "npx prisma migrate deploy --schema=apps/zavod-za-statistiku-service/prisma/schema.prisma && npm run start:prod:zavod"]
 

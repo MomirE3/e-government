@@ -11,6 +11,9 @@ services:
       - zavod-service
     environment:
       - PORT=3000
+    volumes:
+      - ./apps/e-government/src:/app/apps/e-government/src
+    command: ['npx', 'nest', 'start', 'e-government', '--watch']
   mup-service:
     build:
       context: .
@@ -24,6 +27,15 @@ services:
     depends_on:
       - postgres-mup
     restart: on-failure
+    volumes:
+      - ./apps/mup-gradjani-service/src:/app/apps/mup-gradjani-service/src
+      - ./apps/mup-gradjani-service/prisma:/app/apps/mup-gradjani-service/prisma
+    command:
+      [
+        'sh',
+        '-c',
+        'npx prisma migrate deploy --schema=apps/mup-gradjani-service/prisma/schema.prisma && npx nest start mup-gradjani-service --watch',
+      ]
 
   zavod-service:
     build:
@@ -38,6 +50,15 @@ services:
     depends_on:
       - postgres-zavod
     restart: on-failure
+    volumes:
+      - ./apps/zavod-za-statistiku-service/src:/app/apps/zavod-za-statistiku-service/src
+      - ./apps/zavod-za-statistiku-service/prisma:/app/apps/zavod-za-statistiku-service/prisma
+    command:
+      [
+        'sh',
+        '-c',
+        'npx prisma migrate deploy --schema=apps/zavod-za-statistiku-service/prisma/schema.prisma && npx nest start zavod-za-statistiku-service --watch',
+      ]
 
   postgres-mup:
     image: postgres:15
