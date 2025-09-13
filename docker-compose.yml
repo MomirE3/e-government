@@ -11,7 +11,6 @@ services:
       - zavod-service
     environment:
       - PORT=3000
-
   mup-service:
     build:
       context: .
