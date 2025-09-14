@@ -15,10 +15,147 @@ datasource db {
 }
 
 
-model User {
+// Enumerations
+enum RequestType {
+  ID_CARD
+  PASSPORT
+  CITIZENSHIP
+  DRIVING_LICENSE
+}
+
+enum RequestStatus {
+  CREATED
+  IN_PROCESS
+  REJECTED
+  APPROVED
+  COMPLETED
+}
+
+enum InfractionType {
+  DRUNK_DRIVING
+  SPEEDING
+  RED_LIGHT_VIOLATION
+  NO_SEATBELT
+}
+
+// Models
+model Citizen {
+  id        String @id @default(cuid())
+  jmbg      String @unique
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+
+  // Relationships
+  requests   Request[]
+  infractions Infraction[]
+
+  @@map("citizens")
+}
+
+model Address {
+  id           String   @id @default(cuid())
+  street       String
+  number       String
+  city         String
+  postalCode   String
+  country      String
+  validFrom    DateTime
+
+  // Many-to-many with Request
+  requests RequestAddress[]
+
+  @@map("addresses")
+}
+
+model Request {
+  id              String        @id @default(cuid())
+  caseNumber      String        @unique
+  type            RequestType
+  status          RequestStatus
+  submissionDate  DateTime      @default(now())
+
+  // Foreign keys
+  citizenId String
+  citizen   Citizen @relation(fields: [citizenId], references: [id])
+
+  // One-to-one relationships
+  appointment Appointment?
+  payment     Payment?
+  document    Document?
+
+  // Many-to-many with Address
+  addresses RequestAddress[]
+
+  @@map("requests")
+}
+
+model Infraction {
+  id           String         @id @default(cuid())
+  dateTime     DateTime
+  municipality String
+  description  String
+  penaltyPoints Int
+  fine         Decimal        @db.Decimal(10, 2)
+  type         InfractionType
+
+  // Foreign key
+  citizenId String
+  citizen   Citizen @relation(fields: [citizenId], references: [id])
+
+  @@map("infractions")
+}
+
+model Appointment {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  dateTime  DateTime
+  location  String
+  status    String
+
+  // Foreign key
+  requestId String @unique
+  request   Request @relation(fields: [requestId], references: [id])
+
+  @@map("appointments")
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  amount       Decimal  @db.Decimal(10, 2)
+  currency     String
+  referenceNumber String
+  status       String
+  timestamp    DateTime @default(now())
+
+  // Foreign key
+  requestId String @unique
+  request   Request @relation(fields: [requestId], references: [id])
+
+  @@map("payments")
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  issuedDate  DateTime
+
+  // Foreign key
+  requestId String @unique
+  request   Request @relation(fields: [requestId], references: [id])
+
+  @@map("documents")
+}
+
+// Junction table for many-to-many relationship between Request and Address
+model RequestAddress {
+  requestId String
+  addressId String
+
+  request Request @relation(fields: [requestId], references: [id])
+  address Address @relation(fields: [addressId], references: [id])
+
+  @@id([requestId, addressId])
+  @@map("request_address")
 }
