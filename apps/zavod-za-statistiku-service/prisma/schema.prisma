@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
@@ -14,11 +8,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Survey {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String?
+  period      String
+  status      String
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  questions   Question[]
+  sample      Sample?
+  participants Participant[]
+  reports     Report[]
+}
+
+model Question {
+  id        Int       @id @default(autoincrement())
+  text      String
+  type      String
+  required  Boolean
+
+  surveyId  Int
+  survey    Survey    @relation(fields: [surveyId], references: [id])
+  answers   Answer[]
+}
+
+model Sample {
+  id         Int     @id @default(autoincrement())
+  size       Int
+  criteria   String
+
+  surveyId   Int     @unique
+  survey     Survey  @relation(fields: [surveyId], references: [id])
+}
+
+model Participant {
+  id         Int       @id @default(autoincrement())
+  contact    String
+  token      String    @unique
+  status     String
+
+  surveyId   Int
+  survey     Survey    @relation(fields: [surveyId], references: [id])
+  answers    Answer[]
+}
+
+model Answer {
+  id          Int        @id @default(autoincrement())
+  value       String
+  createdAt   DateTime   @default(now())
+
+  questionId  Int
+  question    Question   @relation(fields: [questionId], references: [id])
+
+  participantId Int
+  participant   Participant @relation(fields: [participantId], references: [id])
+}
+
+model Report {
+  id           Int     @id @default(autoincrement())
+  title        String
+  type         String
+  configJSON   String
+  generatedAt  DateTime @default(now())
+
+  surveyId     Int
+  survey       Survey   @relation(fields: [surveyId], references: [id])
+
+  duiIndicators  DUIIndicator[]
+  docsIssued     DocsIssuedIndicator[]
+}
+
+model DUIIndicator {
+  id           Int      @id @default(autoincrement())
+  year         Int
+  municipality String
+  ageBand      String
+  bacBand      String
+  caseCount    Int
+
+  reportId     Int
+  report       Report   @relation(fields: [reportId], references: [id])
+}
+
+model DocsIssuedIndicator {
+  id             Int      @id @default(autoincrement())
+  periodFrom     DateTime
+  periodTo       DateTime
+  documentType   String
+  count          Int
+
+  reportId       Int
+  report         Report   @relation(fields: [reportId], references: [id])
 }
