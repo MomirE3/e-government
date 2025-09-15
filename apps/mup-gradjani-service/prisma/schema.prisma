@@ -50,6 +50,7 @@ model Citizen {
   // Relationships
   requests   Request[]
   infractions Infraction[]
+  address Address?
 
   @@map("citizens")
 }
@@ -63,8 +64,9 @@ model Address {
   country      String
   validFrom    DateTime
 
-  // Many-to-many with Request
-  requests RequestAddress[]
+  // One-to-one with Citizen
+  citizenId String @unique
+  citizen   Citizen @relation(fields: [citizenId], references: [id])
 
   @@map("addresses")
 }
@@ -84,9 +86,6 @@ model Request {
   appointment Appointment?
   payment     Payment?
   document    Document?
-
-  // Many-to-many with Address
-  addresses RequestAddress[]
 
   @@map("requests")
 }
@@ -148,14 +147,3 @@ model Document {
   @@map("documents")
 }
 
-// Junction table for many-to-many relationship between Request and Address
-model RequestAddress {
-  requestId String
-  addressId String
-
-  request Request @relation(fields: [requestId], references: [id])
-  address Address @relation(fields: [addressId], references: [id])
-
-  @@id([requestId, addressId])
-  @@map("request_address")
-}
