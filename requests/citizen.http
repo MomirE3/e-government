@@ -1,0 +1,61 @@
+### Citizen API Requests
+
+### Kreiraj novog gradjanina
+POST http://localhost:3001/citizen
+Content-Type: application/json
+
+{
+  "jmbg": "1234567890133",
+  "firstName": "Pera",
+  "lastName": "Peric",
+  "email": "pera.peric@example.com",
+  "phone": "+381601234567"
+}
+
+### Kreiraj drugog gradjanina
+POST http://localhost:3001/citizen
+Content-Type: application/json
+
+{
+  "jmbg": "9876543210987",
+  "firstName": "Ana",
+  "lastName": "Anic",
+  "email": "ana.anic@example.com",
+  "phone": "+381609876543"
+}
+
+### Dobij sve gradjane
+GET http://localhost:3001/citizen
+
+### Dobij gradjanina po ID
+GET http://localhost:3001/citizen/clh1234567890
+
+### Dobij gradjanina po JMBG
+GET http://localhost:3001/citizen/jmbg/1234567890123
+
+### Azuriraj gradjanina
+PATCH http://localhost:3001/citizen/clh1234567890
+Content-Type: application/json
+
+{
+  "firstName": "Petar",
+  "email": "petar.peric@example.com"
+}
+
+### Obrisi gradjanina
+DELETE http://localhost:3001/citizen/clh1234567890
+
+### Test - pokusaj kreiranja sa istim JMBG (treba da baci gresku)
+POST http://localhost:3001/citizen
+Content-Type: application/json
+
+{
+  "jmbg": "1234567890123",
+  "firstName": "Dusan",
+  "lastName": "Dusanic",
+  "email": "dusan.dusanic@example.com",
+  "phone": "+381601111111"
+}
+
+### Test - pokusaj pristupa nepostojecim ID (treba da baci 404)
+GET http://localhost:3001/citizen/nonexistent-id
