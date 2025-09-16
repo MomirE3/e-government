@@ -1,3 +1,6 @@
+### Survey API Requests
+
+### 1. Kreiraj novu anketu
 POST http://localhost:3002/surway
 Content-Type: application/json
 
@@ -6,4 +9,37 @@ Content-Type: application/json
   "description": "Opis ankete",
   "period": "2025-09",
   "status": "active"
+}
+
+### 2. Dodaj pitanje u anketu (nakon što dobiješ surveyId iz koraka 1)
+POST http://localhost:3002/surway/1/questions
+Content-Type: application/json
+
+{
+  "text": "Koliko imate godina?",
+  "type": "number",
+  "required": true
+}
+
+### 3. Dodaj još jedno pitanje
+POST http://localhost:3002/surway/1/questions
+Content-Type: application/json
+
+{
+  "text": "Da li ste zaposlni?",
+  "type": "boolean",
+  "required": false
+}
+
+### 4. Dobavi sva pitanja za anketu
+GET http://localhost:3002/surway/1/questions
+
+### 5. Dodaj pitanje u nepostojecu anketu
+POST http://localhost:3002/surway/2/questions
+Content-Type: application/json
+
+{
+  "text": "Da li ste zaposlni?",
+  "type": "boolean",
+  "required": false
 }
