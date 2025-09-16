@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { Question } from './entities/question.entity';
-import { Question as PrismaQuestion } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+
+type PrismaQuestion = Prisma.QuestionGetPayload<{}>;
 
 @Injectable()
 export class QuestionRepository {
