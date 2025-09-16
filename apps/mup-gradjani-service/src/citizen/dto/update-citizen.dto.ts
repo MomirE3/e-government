@@ -7,7 +7,5 @@ export class UpdateCitizenDto {
   lastName: string;
   email: string;
   phone: string;
-  // requests: Request[];
-  // infractions: Infraction[];
   address: CreateAddressDto;
 }

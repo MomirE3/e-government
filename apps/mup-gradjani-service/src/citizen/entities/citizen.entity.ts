@@ -1,4 +1,5 @@
 import { Address } from '../../address/entities/address.entity';
+import { Infraction } from '../../infraction/entities/infraction.entity';
 
 export interface Citizen {
   id: string;
@@ -8,6 +9,6 @@ export interface Citizen {
   email: string;
   phone: string;
   requests: any[];
-  infractions: any[];
+  infractions: Infraction[];
   address: Address | null;
 }
