@@ -1,0 +1,70 @@
+### Address API Requests
+
+### Kreiraj novu adresu za gradjanina
+POST http://localhost:3001/address
+Content-Type: application/json
+
+{
+  "street": "Knez Mihailova",
+  "number": "15",
+  "city": "Beograd",
+  "postalCode": "11000",
+  "country": "Serbia",
+  "validFrom": "2024-01-01T00:00:00.000Z",
+  "citizenId": "clh1234567890"
+}
+
+### Kreiraj drugu adresu
+POST http://localhost:3001/address
+Content-Type: application/json
+
+{
+  "street": "Terazije",
+  "number": "25",
+  "city": "Beograd",
+  "postalCode": "11000",
+  "country": "Serbia",
+  "validFrom": "2024-06-01T00:00:00.000Z",
+  "citizenId": "clh9876543210"
+}
+
+### Dobij sve adrese
+GET http://localhost:3001/address
+
+### Dobij adresu po ID
+GET http://localhost:3001/address/clh1234567890
+
+### Dobij adresu po citizen ID
+GET http://localhost:3001/address/citizen/clh1234567890
+
+### Azuriraj adresu
+PATCH http://localhost:3001/address/clh1234567890
+Content-Type: application/json
+
+{
+  "street": "Knez Mihailova",
+  "number": "15A",
+  "city": "Beograd",
+  "postalCode": "11000",
+  "country": "Serbia"
+}
+
+### Obrisi adresu
+DELETE http://localhost:3001/address/clh1234567890
+
+### Test - pokusaj kreiranja druge adrese za istog gradjanina (treba da baci gresku)
+POST http://localhost:3001/address
+Content-Type: application/json
+
+{
+  "street": "Vracar",
+  "number": "10",
+  "city": "Beograd",
+  "postalCode": "11000",
+  "country": "Serbia",
+  "validFrom": "2024-12-01T00:00:00.000Z",
+  "citizenId": "clh1234567890"
+}
+
+### Test - pokusaj pristupa nepostojecim ID (treba da baci 404)
+GET http://localhost:3001/address/nonexistent-id

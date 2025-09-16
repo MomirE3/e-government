@@ -14,14 +14,22 @@ export class CitizenRepository {
   constructor(private prisma: PrismaService) {}
 
   async create(createCitizenDto: CreateCitizenDto): Promise<Citizen> {
+    const { address, ...citizenData } = createCitizenDto;
+
     const citizen = await this.prisma.citizen.create({
-      data: createCitizenDto,
+      data: {
+        ...citizenData,
+        address: {
+          create: address,
+        },
+      },
       include: {
         address: true,
         requests: true,
         infractions: true,
       },
     });
+
     return this.toEntity(citizen);
   }
 
@@ -64,9 +72,22 @@ export class CitizenRepository {
     id: string,
     updateCitizenDto: UpdateCitizenDto,
   ): Promise<Citizen> {
+    const { address, ...citizenData } = updateCitizenDto;
+
+    const updateData: Prisma.CitizenUpdateInput = { ...citizenData };
+
+    if (address) {
+      updateData.address = {
+        upsert: {
+          update: address,
+          create: address,
+        },
+      };
+    }
+
     const citizen = await this.prisma.citizen.update({
       where: { id },
-      data: updateCitizenDto,
+      data: updateData,
       include: {
         address: true,
         requests: true,
