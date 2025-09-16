@@ -1,7 +1,26 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - '5173:5173'
+    environment:
+      - PORT=5173
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tsconfig.app.json:/app/tsconfig.app.json
+      - ./frontend/tsconfig.node.json:/app/tsconfig.node.json
+    command: ['npm', 'run', 'dev']
+
   gateway:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./apps/e-government/Dockerfile
     container_name: gateway
     ports:
@@ -9,14 +28,15 @@ services:
     depends_on:
       - mup-service
       - zavod-service
+      - frontend
     environment:
       - PORT=3000
     volumes:
-      - ./apps/e-government/src:/app/apps/e-government/src
+      - ./backend/apps/e-government/src:/app/apps/e-government/src
     command: ['npx', 'nest', 'start', 'e-government', '--watch']
   mup-service:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./apps/mup-gradjani-service/Dockerfile
     container_name: mup-service
     ports:
@@ -28,8 +48,8 @@ services:
       - postgres-mup
     restart: on-failure
     volumes:
-      - ./apps/mup-gradjani-service/src:/app/apps/mup-gradjani-service/src
-      - ./apps/mup-gradjani-service/prisma:/app/apps/mup-gradjani-service/prisma
+      - ./backend/apps/mup-gradjani-service/src:/app/apps/mup-gradjani-service/src
+      - ./backend/apps/mup-gradjani-service/prisma:/app/apps/mup-gradjani-service/prisma
     command:
       [
         'sh',
@@ -39,7 +59,7 @@ services:
 
   zavod-service:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./apps/zavod-za-statistiku-service/Dockerfile
     container_name: zavod-service
     ports:
@@ -51,8 +71,8 @@ services:
       - postgres-zavod
     restart: on-failure
     volumes:
-      - ./apps/zavod-za-statistiku-service/src:/app/apps/zavod-za-statistiku-service/src
-      - ./apps/zavod-za-statistiku-service/prisma:/app/apps/zavod-za-statistiku-service/prisma
+      - ./backend/apps/zavod-za-statistiku-service/src:/app/apps/zavod-za-statistiku-service/src
+      - ./backend/apps/zavod-za-statistiku-service/prisma:/app/apps/zavod-za-statistiku-service/prisma
     command:
       [
         'sh',
@@ -85,17 +105,6 @@ services:
       - '5433:5432'
     volumes:
       - postgres_zavod_data:/var/lib/postgresql/data
-
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   container_name: pgadmin
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #   ports:
-  #     - '5050:80'
-  #   depends_on:
-  #     - postgres
 
 volumes:
   postgres_mup_data:
