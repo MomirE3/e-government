@@ -3,9 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { CitizenService } from './citizen.service';
 import { CreateCitizenDto } from './dto/create-citizen.dto';
@@ -35,7 +35,7 @@ export class CitizenController {
     return this.citizenService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCitizenDto: UpdateCitizenDto) {
     return this.citizenService.update(id, updateCitizenDto);
   }

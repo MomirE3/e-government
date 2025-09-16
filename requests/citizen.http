@@ -21,7 +21,15 @@ Content-Type: application/json
   "firstName": "Ana",
   "lastName": "Anic",
   "email": "ana.anic@example.com",
-  "phone": "+381609876543"
+  "phone": "+381609876543",
+  "address": {
+    "street": "Knez Mihailova",
+    "number": "15",
+    "city": "Beograd",
+    "postalCode": "11000",
+    "country": "Serbia",
+    "validFrom": "2024-01-01T00:00:00.000Z"
+  }
 }
 
 ### Dobij sve gradjane
@@ -38,8 +46,19 @@ PATCH http://localhost:3001/citizen/clh1234567890
 Content-Type: application/json
 
 {
+  "jmbg": "1234567890133",
   "firstName": "Petar",
-  "email": "petar.peric@example.com"
+  "lastName": "Peric",
+  "email": "petar.peric@example.com",
+  "phone": "+381601234567",
+  "address": {
+    "street": "Knez Mihailova",
+    "number": "15",
+    "city": "Beograd",
+    "postalCode": "11000",
+    "country": "Serbia",
+    "validFrom": "2024-01-01T00:00:00.000Z"
+  }
 }
 
 ### Obrisi gradjanina
