@@ -1,3 +1,6 @@
+import { Address } from '../../address/entities/address.entity';
+import { Infraction } from '../../infraction/entities/infraction.entity';
+
 export interface Citizen {
   id: string;
   jmbg: string;
@@ -5,7 +8,7 @@ export interface Citizen {
   lastName: string;
   email: string;
   phone: string;
-  requests: any[]; // možeš zameniti tipom Request ako ga imaš
-  infractions: any[]; // ili Infraction
-  address: any;
+  requests: any[];
+  infractions: Infraction[];
+  address: Address | null;
 }
