@@ -7,6 +7,6 @@ export class CreateCitizenDto {
   email: string;
   phone: string;
   // requests: Request[];
-  // infractions: Infraction[];
+  // infractions: CreateInfractionDto[]; // Prekršaji se dodaju nakon kreiranja građanina
   address: CreateAddressDto;
 }

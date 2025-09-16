@@ -134,7 +134,16 @@ export class CitizenRepository {
       email: citizen.email,
       phone: citizen.phone,
       requests: citizen.requests || [],
-      infractions: citizen.infractions || [],
+      infractions:
+        citizen.infractions?.map((infraction) => ({
+          id: infraction.id,
+          dateTime: infraction.dateTime,
+          municipality: infraction.municipality,
+          description: infraction.description,
+          penaltyPoints: infraction.penaltyPoints,
+          fine: infraction.fine.toNumber(),
+          type: infraction.type,
+        })) || [],
       address: citizen.address || null,
     };
   }

@@ -1,0 +1,90 @@
+### Infraction HTTP Requests
+
+### 1. Create Infraction
+POST http://localhost:3001/infraction
+Content-Type: application/json
+
+{
+  "dateTime": "2024-01-15T10:30:00Z",
+  "municipality": "Beograd",
+  "description": "Prekoračenje brzine u gradskoj zoni",
+  "penaltyPoints": 3,
+  "fine": 5000,
+  "type": "SPEEDING",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+### 2. Create Another Infraction
+POST http://localhost:3001/infraction
+Content-Type: application/json
+
+{
+  "dateTime": "2024-02-20T14:45:00Z",
+  "municipality": "Novi Sad",
+  "description": "Vožnja u alkoholisanom stanju",
+  "penaltyPoints": 6,
+  "fine": 15000,
+  "type": "DRUNK_DRIVING",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+### 3. Create Red Light Violation
+POST http://localhost:3001/infraction
+Content-Type: application/json
+
+{
+  "dateTime": "2024-03-10T08:15:00Z",
+  "municipality": "Niš",
+  "description": "Prolazak kroz crveno svetlo",
+  "penaltyPoints": 4,
+  "fine": 8000,
+  "type": "RED_LIGHT_VIOLATION",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+### 4. Create No Seatbelt Infraction
+POST http://localhost:3001/infraction
+Content-Type: application/json
+
+{
+  "dateTime": "2024-03-25T16:20:00Z",
+  "municipality": "Kragujevac",
+  "description": "Vožnja bez vezanog pojasa",
+  "penaltyPoints": 2,
+  "fine": 3000,
+  "type": "NO_SEATBELT",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+### 5. Get All Infractions
+GET http://localhost:3001/infraction
+
+### 6. Get Infraction by ID
+GET http://localhost:3001/infraction/infraction_id_here
+
+### 7. Update Infraction
+PUT http://localhost:3001/infraction/cmfmu96kr0001l68ztmt4cloy
+Content-Type: application/json
+
+{
+  "dateTime": "2024-01-15T10:30:00Z",
+  "municipality": "Beograd - Centar",
+  "description": "Prekoračenje brzine u gradskoj zoni - ažurirano",
+  "penaltyPoints": 4,
+  "fine": 6000,
+  "type": "SPEEDING",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+### 8. Delete Infraction
+DELETE http://localhost:3001/infraction/infraction_id_here
+
+### 9. Get Infractions by Citizen ID (if implemented)
+GET http://localhost:3001/infraction/citizen/cmfjxkj5w0000o67kpzsw2jkv
+
+### Notes:
+# - citizenId is set to: cmfjxkj5w0000o67kpzsw2jkv
+# - Replace "infraction_id_here" with actual infraction ID
+# - InfractionType enum values: DRUNK_DRIVING, SPEEDING, RED_LIGHT_VIOLATION, NO_SEATBELT
+# - dateTime should be in ISO 8601 format
+# - fine and penaltyPoints are numbers
