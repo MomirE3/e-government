@@ -21,6 +21,8 @@ export class QuestionRepository {
   }
 
   async create(surveyId: number, dto: CreateQuestionDto): Promise<Question> {
+    console.log('dto', dto);
+    console.log('surveyId', surveyId);
     const prismaQ = await this.prisma.question.create({
       data: {
         ...dto,

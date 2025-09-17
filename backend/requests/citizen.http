@@ -5,7 +5,7 @@ POST http://localhost:3000/mup/citizens
 Content-Type: application/json
 
 {
-  "jmbg": "1234567890433",
+  "jmbg": "12345678904233",
   "firstName": "Pera",
   "lastName": "Peric",
   "email": "pera.peric@example.com",

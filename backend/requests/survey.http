@@ -1,7 +1,7 @@
 ### Survey API Requests
 
 ### 1. Kreiraj novu anketu
-POST http://localhost:3002/surway
+POST http://localhost:3000/zavod/surway
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### 2. Dodaj pitanje u anketu (nakon što dobiješ surveyId iz koraka 1)
-POST http://localhost:3002/surway/1/questions
+POST http://localhost:3000/zavod/surway/2/questions
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### 3. Dodaj još jedno pitanje
-POST http://localhost:3002/surway/1/questions
+POST http://localhost:3000/zavod/surway/1/questions
 Content-Type: application/json
 
 {
@@ -32,10 +32,10 @@ Content-Type: application/json
 }
 
 ### 4. Dobavi sva pitanja za anketu
-GET http://localhost:3002/surway/1/questions
+GET http://localhost:3000/zavod/surway/1/questions
 
 ### 5. Dodaj pitanje u nepostojecu anketu
-POST http://localhost:3002/surway/2/questions
+POST http://localhost:3000/zavod/surway/2/questions
 Content-Type: application/json
 
 {

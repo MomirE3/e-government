@@ -9,7 +9,10 @@ RUN npm install
 
 COPY . .
 
+# Generiši Prisma client
 RUN npx prisma generate --schema=apps/mup-gradjani-service/prisma/schema.prisma
+
+# Build aplikaciju
 RUN npx nest build mup-gradjani-service
 
 EXPOSE 3000

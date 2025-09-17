@@ -1,4 +1,4 @@
-import { InfractionType } from '@prisma/client';
+import { InfractionType } from './create-infraction.dto';
 
 export type UpdateInfractionDto = {
   id: string;

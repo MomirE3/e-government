@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MupController } from './mup-gateway/mup-controller';
 import { RpcExceptionFilter } from './filters/rpc-exception.filter';
+import { ZavodController } from './zavod-gateway/zavod-controller';
 
 @Module({
   imports: [
@@ -17,9 +18,17 @@ import { RpcExceptionFilter } from './filters/rpc-exception.filter';
           port: 3001,
         },
       },
+      {
+        name: 'ZAVOD-SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'zavod-service',
+          port: 3002,
+        },
+      },
     ]),
   ],
-  controllers: [AppController, MupController],
+  controllers: [AppController, MupController, ZavodController],
   providers: [
     AppService,
     {

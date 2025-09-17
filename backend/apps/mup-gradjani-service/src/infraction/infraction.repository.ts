@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Infraction } from './entities/infraction.entity';
-import { Infraction as PrismaInfraction } from '@prisma/client';
+import {
+  Infraction as PrismaInfraction,
+  InfractionType as PrismaInfractionType,
+} from '@prisma/client';
 import type { CreateInfractionDto } from './dto/create-infraction.dto';
 import type { UpdateInfractionDto } from './dto/update-infraction.dto';
 
@@ -11,7 +14,11 @@ export class InfractionRepository {
 
   async create(createInfractionDto: CreateInfractionDto): Promise<Infraction> {
     const infraction = await this.prisma.infraction.create({
-      data: createInfractionDto,
+      data: {
+        ...createInfractionDto,
+        type: createInfractionDto.type as PrismaInfractionType,
+        dateTime: new Date(createInfractionDto.dateTime),
+      },
     });
     return this.toEntity(infraction);
   }
@@ -20,9 +27,14 @@ export class InfractionRepository {
     id: string,
     updateInfractionDto: UpdateInfractionDto,
   ): Promise<Infraction> {
+    const { ...updateData } = updateInfractionDto;
     const infraction = await this.prisma.infraction.update({
       where: { id },
-      data: updateInfractionDto,
+      data: {
+        ...updateData,
+        type: updateData.type as PrismaInfractionType,
+        dateTime: new Date(updateData.dateTime),
+      },
     });
     return this.toEntity(infraction);
   }

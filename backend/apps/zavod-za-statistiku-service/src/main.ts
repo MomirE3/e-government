@@ -1,17 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { ZavodZaStatistikuServiceModule } from './zavod-za-statistiku-service.module';
-import { join } from 'path';
-import * as express from 'express';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ZavodZaStatistikuServiceModule);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    ZavodZaStatistikuServiceModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        host: 'zavod-service',
+        port: 3002,
+      },
+    },
+  );
 
-  app.enableCors();
-
-  app.use('/survey', express.static(join(__dirname, '..', 'public', 'survey')));
-
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
-  console.log(`Zavod za statistiku Service is running on port ${port}`);
+  // Omogućiti CORS za development
+  await app.listen();
+  console.log(`Zavod Za Statistiku Service is running on zavod-service`);
 }
 void bootstrap();
