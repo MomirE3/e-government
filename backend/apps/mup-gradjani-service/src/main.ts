@@ -1,14 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { MupGradjaniServiceModule } from './mup-gradjani-service.module';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MupGradjaniServiceModule);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    MupGradjaniServiceModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        host: 'mup-service',
+        port: 3001,
+      },
+    },
+  );
 
   // Omogućiti CORS za development
-  app.enableCors();
-
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
-  console.log(`MUP Gradjani Service is running on port ${port}`);
+  await app.listen();
+  console.log(`MUP Gradjani Service is running on mup-service`);
 }
 void bootstrap();

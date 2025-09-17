@@ -1,47 +1,42 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CitizenService } from './citizen.service';
 import { CreateCitizenDto } from './dto/create-citizen.dto';
 import { UpdateCitizenDto } from './dto/update-citizen.dto';
 
-@Controller('citizen')
+@Controller('citizens')
 export class CitizenController {
   constructor(private readonly citizenService: CitizenService) {}
 
-  @Post()
-  create(@Body() createCitizenDto: CreateCitizenDto) {
-    return this.citizenService.create(createCitizenDto);
+  @MessagePattern('createCitizen')
+  async create(@Payload() dto: CreateCitizenDto) {
+    return this.citizenService.create(dto);
   }
 
-  @Get()
+  @MessagePattern('findAllCitizens')
   findAll() {
     return this.citizenService.findAll();
   }
 
-  @Get('jmbg/:jmbg')
-  findByJmbg(@Param('jmbg') jmbg: string) {
+  @MessagePattern('findCitizenByJmbg')
+  async findByJmbg(@Payload() jmbg: string) {
     return this.citizenService.findByJmbg(jmbg);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @MessagePattern('findOneCitizen')
+  async findOne(@Payload() id: string) {
     return this.citizenService.findOne(id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateCitizenDto: UpdateCitizenDto) {
-    return this.citizenService.update(id, updateCitizenDto);
+  @MessagePattern('updateCitizen')
+  async update(
+    @Payload() data: { id: string; updateCitizenDto: UpdateCitizenDto },
+  ) {
+    return this.citizenService.update(data.id, data.updateCitizenDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @MessagePattern('removeCitizen')
+  async remove(@Payload() id: string) {
     return this.citizenService.remove(id);
   }
 }
