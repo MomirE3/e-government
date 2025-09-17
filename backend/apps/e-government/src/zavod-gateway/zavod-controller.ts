@@ -1,10 +1,19 @@
-import { Controller, Post, Inject, Body, Param, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Inject,
+  Body,
+  Param,
+  Get,
+  Res,
+} from '@nestjs/common';
+import type { Response } from 'express';
 import { ClientProxy } from '@nestjs/microservices';
 import type { CreateSurwayDto } from 'apps/zavod-za-statistiku-service/src/surway/dto/create-surway.dto';
 import type { CreateQuestionDto } from 'apps/zavod-za-statistiku-service/src/question/dto/create-question.dto';
 import type { CreateSampleDto } from 'apps/zavod-za-statistiku-service/src/sample/dto/sample.dto';
 import type { CreateParticipantDto } from 'apps/zavod-za-statistiku-service/src/participant/dto/create-participant.dto';
-import type { SubmitAnswersDto } from 'apps/zavod-za-statistiku-service/src/answer/dto/submit-answers.dto';
+import { SubmitAnswersDto } from 'apps/zavod-za-statistiku-service/src/answer/dto/submit-answers.dto';
 
 @Controller('zavod')
 export class ZavodController {
@@ -55,5 +64,25 @@ export class ZavodController {
     @Param('token') token: string,
   ) {
     return this.zavodService.send('findParticipantByToken', { id, token });
+  }
+
+  @Get('surway/fill/:token')
+  serveSurveyForm(@Param('token') token: string, @Res() res: Response) {
+    const htmlPath =
+      '/app/apps/zavod-za-statistiku-service/public/survey/index.html';
+    res.sendFile(htmlPath);
+  }
+
+  @Get('surway/participants/:token')
+  getParticipantByToken(@Param('token') token: string) {
+    return this.zavodService.send('findParticipantByToken', { id: '0', token });
+  }
+
+  @Post('surway/participants/:token/answers')
+  submitAnswersByToken(
+    @Param('token') token: string,
+    @Body() dto: SubmitAnswersDto,
+  ) {
+    return this.zavodService.send('submitAnswers', { id: '0', token, dto });
   }
 }

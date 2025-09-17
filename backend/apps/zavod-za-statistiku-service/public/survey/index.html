@@ -10,11 +10,13 @@
     <button id="submit">Submit</button>
 
     <script>
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      const url = window.location.href;
+      const token = url.split('/')[url.split('/').length - 1];
 
       async function loadQuestions() {
-        const res = await fetch(`/surway/participants/${token}`);
+        const res = await fetch(
+          `http://localhost:3000/zavod/surway/participants/${token}`,
+        );
         if (!res.ok) {
           document.getElementById('questions').innerText =
             'Invalid or expired link.';
@@ -43,7 +45,7 @@
           participantToken: token,
         }));
 
-        const res = await fetch(`/surway/participants/${token}/answers`, {
+        const res = await fetch(`/zavod/surway/participants/${token}/answers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ answers }),

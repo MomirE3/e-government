@@ -18,7 +18,7 @@ export class MailService {
   }
 
   async sendSurveyInvitation(to: string, token: string) {
-    const surveyLink = `${process.env.APP_URL}/surway/fill/${token}`;
+    const surveyLink = `${process.env.APP_URL || 'http://localhost:3000'}/surway/fill/${token}`;
 
     try {
       const info = await this.transporter.sendMail({
