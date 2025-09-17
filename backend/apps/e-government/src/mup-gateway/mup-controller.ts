@@ -9,10 +9,11 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/create-citizen.dto';
 import { UpdateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/update-citizen.dto';
 import { firstValueFrom } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Controller('mup')
 export class MupController {
@@ -22,27 +23,50 @@ export class MupController {
 
   @Post('citizens')
   async createCitizen(@Body() body: CreateCitizenDto) {
-    try {
-      return await firstValueFrom(this.mupService.send('createCitizen', body));
-    } catch (err: any) {
-      console.error('createCitizen failed:', err); // videćeš npr. ECONNREFUSED
-      throw err; // ili new BadGatewayException(err?.message ?? 'Upstream error');
-    }
+    return firstValueFrom(
+      this.mupService.send('createCitizen', body).pipe(
+        catchError((error) => {
+          console.error('createCitizen failed:');
+          console.error('Error type:', typeof error);
+          console.error('Error object:', error);
+          console.error('Error stringified:', JSON.stringify(error, null, 2));
+          throw new RpcException(error);
+        }),
+      ),
+    );
   }
 
   @Get('citizens')
   async findAllCitizens(@Query() query?: any) {
-    return firstValueFrom(this.mupService.send('findAllCitizens', query));
+    return firstValueFrom(
+      this.mupService.send('findAllCitizens', query).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      ),
+    );
   }
 
   @Get('citizens/jmbg/:jmbg')
   async findCitizenByJmbg(@Param('jmbg') jmbg: string) {
-    return firstValueFrom(this.mupService.send('findCitizenByJmbg', jmbg));
+    return firstValueFrom(
+      this.mupService.send('findCitizenByJmbg', jmbg).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      ),
+    );
   }
 
   @Get('citizens/:id')
   async findOneCitizen(@Param('id') id: string) {
-    return firstValueFrom(this.mupService.send('findOneCitizen', id));
+    return firstValueFrom(
+      this.mupService.send('findOneCitizen', id).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      ),
+    );
   }
 
   @Put('citizens/:id')
@@ -51,12 +75,22 @@ export class MupController {
     @Body() updateCitizenDto: UpdateCitizenDto,
   ) {
     return firstValueFrom(
-      this.mupService.send('updateCitizen', { id, updateCitizenDto }),
+      this.mupService.send('updateCitizen', { id, updateCitizenDto }).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      ),
     );
   }
 
   @Delete('citizens/:id')
   async removeCitizen(@Param('id') id: string) {
-    return firstValueFrom(this.mupService.send('removeCitizen', id));
+    return firstValueFrom(
+      this.mupService.send('removeCitizen', id).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      ),
+    );
   }
 }

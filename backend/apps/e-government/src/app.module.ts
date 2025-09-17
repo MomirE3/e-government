@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MupController } from './mup-gateway/mup-controller';
+import { RpcExceptionFilter } from './filters/rpc-exception.filter';
 
 @Module({
   imports: [
@@ -18,6 +20,12 @@ import { MupController } from './mup-gateway/mup-controller';
     ]),
   ],
   controllers: [AppController, MupController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: RpcExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

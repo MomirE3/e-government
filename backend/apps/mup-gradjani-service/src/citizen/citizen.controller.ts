@@ -10,17 +10,7 @@ export class CitizenController {
 
   @MessagePattern('createCitizen')
   async create(@Payload() dto: CreateCitizenDto) {
-    try {
-      return await this.citizenService.create(dto);
-    } catch (e: any) {
-      console.error('[createCitizen] error:', {
-        name: e?.name,
-        code: e?.code,
-        message: e?.message,
-        meta: e?.meta,
-      });
-      throw e;
-    }
+    return this.citizenService.create(dto);
   }
 
   @MessagePattern('findAllCitizens')
@@ -29,22 +19,24 @@ export class CitizenController {
   }
 
   @MessagePattern('findCitizenByJmbg')
-  findByJmbg(@Payload() jmbg: string) {
+  async findByJmbg(@Payload() jmbg: string) {
     return this.citizenService.findByJmbg(jmbg);
   }
 
   @MessagePattern('findOneCitizen')
-  findOne(@Payload() id: string) {
+  async findOne(@Payload() id: string) {
     return this.citizenService.findOne(id);
   }
 
   @MessagePattern('updateCitizen')
-  update(@Payload() data: { id: string; updateCitizenDto: UpdateCitizenDto }) {
+  async update(
+    @Payload() data: { id: string; updateCitizenDto: UpdateCitizenDto },
+  ) {
     return this.citizenService.update(data.id, data.updateCitizenDto);
   }
 
   @MessagePattern('removeCitizen')
-  remove(@Payload() id: string) {
+  async remove(@Payload() id: string) {
     return this.citizenService.remove(id);
   }
 }
