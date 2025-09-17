@@ -1,6 +1,7 @@
-POST http://localhost:3002/surway/1/participants
+POST http://localhost:3000/zavod/surway/1/participants
 Content-Type: application/json
 
 {
   "contact": "kikiduska@gmail.com"
 }
+

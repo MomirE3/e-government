@@ -35,7 +35,7 @@ Content-Type: application/json
 GET http://localhost:3000/zavod/surway/1/questions
 
 ### 5. Dodaj pitanje u nepostojecu anketu
-POST http://localhost:3000/zavod/surway/2/questions
+POST http://localhost:3000/zavod/surway/2222/questions
 Content-Type: application/json
 
 {

@@ -27,7 +27,12 @@ export class ZavodController {
     return this.zavodService.send('createSample', { id, dto });
   }
 
-  @Post('surway/:id/participant')
+  @Get('surway/:id/sample')
+  getSample(@Param('id') id: string) {
+    return this.zavodService.send('getSample', { id });
+  }
+
+  @Post('surway/:id/participants')
   createParticipant(
     @Param('id') id: string,
     @Body() dto: CreateParticipantDto,
@@ -35,7 +40,7 @@ export class ZavodController {
     return this.zavodService.send('createParticipant', { id, dto });
   }
 
-  @Post('surway/:id/participant/:token/answers')
+  @Post('surway/:id/participants/:token/answers')
   submitAnswers(
     @Param('id') id: string,
     @Param('token') token: string,
@@ -44,7 +49,7 @@ export class ZavodController {
     return this.zavodService.send('submitAnswers', { id, token, dto });
   }
 
-  @Get('surway/:id/participant/:token')
+  @Get('surway/:id/participants/:token')
   findParticipantByToken(
     @Param('id') id: string,
     @Param('token') token: string,
