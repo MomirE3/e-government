@@ -7,6 +7,8 @@ import { SampleService } from '../sample/sample.service';
 import type { CreateSampleDto } from '../sample/dto/sample.dto';
 import { ParticipantService } from '../participant/participant.service';
 import type { CreateParticipantDto } from '../participant/dto/create-participant.dto';
+import { AnswerService } from '../answer/answer.service';
+import { SubmitAnswersDto } from '../answer/dto/submit-answers.dto';
 
 @Controller('surway')
 export class SurwayController {
@@ -15,6 +17,7 @@ export class SurwayController {
     private readonly questionService: QuestionService,
     private readonly sampleService: SampleService,
     private readonly participantService: ParticipantService,
+    private readonly answerService: AnswerService,
   ) {}
 
   @Post()
@@ -58,5 +61,10 @@ export class SurwayController {
   @Patch('participants/:id/complete')
   markParticipantCompleted(@Param('id') id: string) {
     return this.participantService.markCompleted(+id);
+  }
+
+  @Post('participants/:token/answers')
+  submitAnswers(@Param('token') token: string, @Body() dto: SubmitAnswersDto) {
+    return this.answerService.submitAnswers(token, dto);
   }
 }
