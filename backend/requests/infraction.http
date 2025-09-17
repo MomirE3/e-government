@@ -1,7 +1,7 @@
 ### Infraction HTTP Requests
 
 ### 1. Create Infraction
-POST http://localhost:3001/infraction
+POST http://localhost:3000/mup/infraction
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ### 2. Create Another Infraction
-POST http://localhost:3001/infraction
+POST http://localhost:3000/mup/infraction
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### 3. Create Red Light Violation
-POST http://localhost:3001/infraction
+POST http://localhost:3000/mup/infraction
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 
 ### 4. Create No Seatbelt Infraction
-POST http://localhost:3001/infraction
+POST http://localhost:3000/mup/infraction
 Content-Type: application/json
 
 {
@@ -57,13 +57,13 @@ Content-Type: application/json
 }
 
 ### 5. Get All Infractions
-GET http://localhost:3001/infraction
+GET http://localhost:3000/mup/infraction
 
 ### 6. Get Infraction by ID
-GET http://localhost:3001/infraction/infraction_id_here
+GET http://localhost:3000/mup/infraction/infraction_id_here
 
 ### 7. Update Infraction
-PUT http://localhost:3001/infraction/cmfmu96kr0001l68ztmt4cloy
+PUT http://localhost:3000/mup/infraction/cmfmu96kr0001l68ztmt4cloy
 Content-Type: application/json
 
 {
@@ -77,10 +77,10 @@ Content-Type: application/json
 }
 
 ### 8. Delete Infraction
-DELETE http://localhost:3001/infraction/infraction_id_here
+DELETE http://localhost:3000/mup/infraction/infraction_id_here
 
 ### 9. Get Infractions by Citizen ID (if implemented)
-GET http://localhost:3001/infraction/citizen/cmfjxkj5w0000o67kpzsw2jkv
+GET http://localhost:3000/mup/infraction/citizen/cmfjxkj5w0000o67kpzsw2jkv
 
 ### Notes:
 # - citizenId is set to: cmfjxkj5w0000o67kpzsw2jkv

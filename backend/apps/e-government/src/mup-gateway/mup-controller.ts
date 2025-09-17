@@ -9,11 +9,11 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { CreateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/create-citizen.dto';
 import { UpdateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/update-citizen.dto';
-import { firstValueFrom } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import type { CreateInfractionDto } from 'apps/mup-gradjani-service/src/infraction/dto/create-infraction.dto';
+import type { UpdateInfractionDto } from 'apps/mup-gradjani-service/src/infraction/dto/update-infraction.dto';
 
 @Controller('mup')
 export class MupController {
@@ -22,75 +22,80 @@ export class MupController {
   ) {}
 
   @Post('citizens')
-  async createCitizen(@Body() body: CreateCitizenDto) {
-    return firstValueFrom(
-      this.mupService.send('createCitizen', body).pipe(
-        catchError((error) => {
-          console.error('createCitizen failed:');
-          console.error('Error type:', typeof error);
-          console.error('Error object:', error);
-          console.error('Error stringified:', JSON.stringify(error, null, 2));
-          throw new RpcException(error);
-        }),
-      ),
-    );
+  createCitizen(@Body() body: CreateCitizenDto) {
+    return this.mupService.send('createCitizen', body);
   }
 
   @Get('citizens')
-  async findAllCitizens(@Query() query?: any) {
-    return firstValueFrom(
-      this.mupService.send('findAllCitizens', query).pipe(
-        catchError((error) => {
-          throw new RpcException(error);
-        }),
-      ),
-    );
+  findAllCitizens(@Query() query?: any) {
+    return this.mupService.send('findAllCitizens', query);
   }
 
   @Get('citizens/jmbg/:jmbg')
-  async findCitizenByJmbg(@Param('jmbg') jmbg: string) {
-    return firstValueFrom(
-      this.mupService.send('findCitizenByJmbg', jmbg).pipe(
-        catchError((error) => {
-          throw new RpcException(error);
-        }),
-      ),
-    );
+  findCitizenByJmbg(@Param('jmbg') jmbg: string) {
+    return this.mupService.send('findCitizenByJmbg', jmbg);
   }
 
   @Get('citizens/:id')
-  async findOneCitizen(@Param('id') id: string) {
-    return firstValueFrom(
-      this.mupService.send('findOneCitizen', id).pipe(
-        catchError((error) => {
-          throw new RpcException(error);
-        }),
-      ),
-    );
+  findOneCitizen(@Param('id') id: string) {
+    return this.mupService.send('findOneCitizen', id);
   }
 
   @Put('citizens/:id')
-  async updateCitizen(
+  updateCitizen(
     @Param('id') id: string,
     @Body() updateCitizenDto: UpdateCitizenDto,
   ) {
-    return firstValueFrom(
-      this.mupService.send('updateCitizen', { id, updateCitizenDto }).pipe(
-        catchError((error) => {
-          throw new RpcException(error);
-        }),
-      ),
-    );
+    return this.mupService.send('updateCitizen', { id, updateCitizenDto });
   }
 
   @Delete('citizens/:id')
-  async removeCitizen(@Param('id') id: string) {
-    return firstValueFrom(
-      this.mupService.send('removeCitizen', id).pipe(
-        catchError((error) => {
-          throw new RpcException(error);
-        }),
-      ),
-    );
+  removeCitizen(@Param('id') id: string) {
+    return this.mupService.send('removeCitizen', id);
+  }
+
+  @Get('address')
+  findAllAddress() {
+    return this.mupService.send('findAllAddress', {});
+  }
+
+  @Get('address/:id')
+  findOneAddress(@Param('id') id: string) {
+    return this.mupService.send('findOneAddress', id);
+  }
+
+  @Delete('address/:id')
+  removeAddress(@Param('id') id: string) {
+    return this.mupService.send('removeAddress', id);
+  }
+
+  @Get('address/citizen/:citizenId')
+  findByCitizenId(@Param('citizenId') citizenId: string) {
+    return this.mupService.send('findByCitizenId', citizenId);
+  }
+
+  @Post('infraction')
+  createInfraction(@Body() body: CreateInfractionDto) {
+    return this.mupService.send('createInfraction', body);
+  }
+
+  @Put('infraction/:id')
+  updateInfraction(@Param('id') id: string, @Body() body: UpdateInfractionDto) {
+    return this.mupService.send('updateInfraction', { id, body });
+  }
+
+  @Get('infraction')
+  findAllInfraction() {
+    return this.mupService.send('findAllInfraction', {});
+  }
+
+  @Get('infraction/:id')
+  findOneInfraction(@Param('id') id: string) {
+    return this.mupService.send('findOneInfraction', id);
+  }
+
+  @Delete('infraction/:id')
+  removeInfraction(@Param('id') id: string) {
+    return this.mupService.send('removeInfraction', id);
   }
 }
