@@ -1,10 +1,14 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Patch } from '@nestjs/common';
 import { SurwayService } from './surway.service';
 import type { CreateSurwayDto } from './dto/create-surway.dto';
 import type { CreateQuestionDto } from '../question/dto/create-question.dto';
 import { QuestionService } from '../question/question.service';
 import { SampleService } from '../sample/sample.service';
 import type { CreateSampleDto } from '../sample/dto/sample.dto';
+import { ParticipantService } from '../participant/participant.service';
+import type { CreateParticipantDto } from '../participant/dto/create-participant.dto';
+import { AnswerService } from '../answer/answer.service';
+import { SubmitAnswersDto } from '../answer/dto/submit-answers.dto';
 
 @Controller('surway')
 export class SurwayController {
@@ -12,6 +16,8 @@ export class SurwayController {
     private readonly surwayService: SurwayService,
     private readonly questionService: QuestionService,
     private readonly sampleService: SampleService,
+    private readonly participantService: ParticipantService,
+    private readonly answerService: AnswerService,
   ) {}
 
   @Post()
@@ -37,5 +43,28 @@ export class SurwayController {
   @Get(':id/sample')
   getSample(@Param('id') id: string) {
     return this.sampleService.findBySurveyId(+id);
+  }
+
+  @Post(':id/participants')
+  createParticipant(
+    @Param('id') id: string,
+    @Body() dto: CreateParticipantDto,
+  ) {
+    return this.participantService.create(+id, dto);
+  }
+
+  @Get('participants/:token')
+  findParticipantByToken(@Param('token') token: string) {
+    return this.participantService.findByToken(token);
+  }
+
+  @Patch('participants/:id/complete')
+  markParticipantCompleted(@Param('id') id: string) {
+    return this.participantService.markCompleted(+id);
+  }
+
+  @Post('participants/:token/answers')
+  submitAnswers(@Param('token') token: string, @Body() dto: SubmitAnswersDto) {
+    return this.answerService.submitAnswers(token, dto);
   }
 }
