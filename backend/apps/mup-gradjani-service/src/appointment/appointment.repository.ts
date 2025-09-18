@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { Appointment } from './entities/appointment.entity';
 import { Prisma } from '@prisma/client';
+import { Payment } from '../payment/entities/payment.entity';
+import { Document } from '../document/entities/document.entity';
+import { Appointment } from './entities/appointment.entity';
 
 type PrismaAppointmentWithRelations = Prisma.AppointmentGetPayload<{
   include: {
@@ -179,8 +181,8 @@ export class AppointmentRepository {
             citizenId: appointment.request.citizenId,
             appointment: appointment.request
               .appointment as unknown as Appointment,
-            payment: appointment.request.payment,
-            document: appointment.request.document,
+            payment: appointment.request.payment as unknown as Payment,
+            document: appointment.request.document as unknown as Document,
           }
         : undefined,
     };

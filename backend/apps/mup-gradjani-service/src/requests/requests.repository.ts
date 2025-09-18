@@ -6,6 +6,7 @@ import { Request } from './entities/request.entity';
 import { Prisma } from '@prisma/client';
 import { Payment } from '../payment/entities/payment.entity';
 import { Appointment } from '../appointment/entities/appointment.entity';
+import { Document } from '../document/entities/document.entity';
 
 type PrismaRequestWithRelations = Prisma.RequestGetPayload<{
   include: { appointment: true; payment: true; document: true };
@@ -64,7 +65,7 @@ export class RequestsRepository {
       citizenId: request.citizenId,
       appointment: request.appointment as unknown as Appointment,
       payment: request.payment as unknown as Payment,
-      document: request.document as any,
+      document: request.document as unknown as Document,
     };
   }
 }

@@ -1,0 +1,66 @@
+### Document API Requests
+### Kreiraj novi dokument
+POST http://localhost:3000/mup/documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "name": "Lična karta - Pera Perić",
+  "type": "ID_CARD",
+  "issuedDate": "2024-02-15T10:00:00.000Z",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Kreiraj drugi dokument
+POST http://localhost:3000/mup/documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "name": "Pasos - Ana Anić",
+  "type": "PASSPORT",
+  "issuedDate": "2024-02-20T14:30:00.000Z",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Dobij sve dokumente
+GET http://localhost:3000/mup/documents
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij dokument po ID
+GET http://localhost:3000/mup/documents/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij dokument po request ID
+GET http://localhost:3000/mup/documents/request/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Ažuriraj dokument
+PUT http://localhost:3000/mup/documents/cmfq0adi50005s1a3qotrv64z
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "name": "Lična karta - Petar Perić",
+  "type": "ID_CARD"
+}
+
+### Obriši dokument
+DELETE http://localhost:3000/mup/documents/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Test - pokušaj kreiranja dokumenta za isti request (treba da baci grešku)
+POST http://localhost:3000/mup/documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "name": "Vozačka dozvola - Pera Perić",
+  "type": "DRIVING_LICENSE",
+  "issuedDate": "2024-02-25T09:00:00.000Z",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Test - pokušaj pristupa nepostojećem ID (treba da baci 404)
+GET http://localhost:3000/mup/documents/nonexistent-id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c

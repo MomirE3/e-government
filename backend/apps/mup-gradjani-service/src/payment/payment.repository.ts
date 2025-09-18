@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { Payment } from './entities/payment.entity';
 import { Prisma } from '@prisma/client';
+import { Document } from '../document/entities/document.entity';
+import { Appointment } from '../appointment/entities/appointment.entity';
+import { Payment } from './entities/payment.entity';
 
 type PrismaPaymentWithRelations = Prisma.PaymentGetPayload<{
   include: {
@@ -181,9 +183,9 @@ export class PaymentRepository {
             status: payment.request.status,
             submissionDate: payment.request.submissionDate.toISOString(),
             citizenId: payment.request.citizenId,
-            appointment: payment.request.appointment as unknown as any,
-            payment: payment.request.payment as unknown as any,
-            document: payment.request.document as unknown as any,
+            appointment: payment.request.appointment as unknown as Appointment,
+            payment: payment.request.payment as unknown as Payment,
+            document: payment.request.document as unknown as Document,
           }
         : undefined,
     };

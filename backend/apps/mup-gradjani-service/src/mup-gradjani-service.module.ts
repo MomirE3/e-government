@@ -10,6 +10,7 @@ import { RpcErrorInterceptor } from './interceptors/rpc-error.interceptor';
 import { RequestsModule } from './requests/requests.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { PaymentModule } from './payment/payment.module';
+import { DocumentModule } from './document/document.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PaymentModule } from './payment/payment.module';
     RequestsModule,
     AppointmentModule,
     PaymentModule,
+    DocumentModule,
   ],
   controllers: [MupGradjaniServiceController],
   providers: [
