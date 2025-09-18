@@ -38,14 +38,21 @@ enum InfractionType {
   NO_SEATBELT
 }
 
+enum UserRole {
+  ADMIN
+  CITIZEN
+}
+
 // Models
 model Citizen {
   id        String @id @default(cuid())
   jmbg      String @unique
   firstName String
   lastName  String
-  email     String
+  email     String @unique
   phone     String
+  password  String?
+  role      UserRole @default(CITIZEN)
 
   // Relationships
   requests   Request[]

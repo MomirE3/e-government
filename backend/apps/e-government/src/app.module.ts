@@ -6,9 +6,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MupController } from './mup-gateway/mup-controller';
 import { RpcExceptionFilter } from './filters/rpc-exception.filter';
 import { ZavodController } from './zavod-gateway/zavod-controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     ClientsModule.register([
       {
         name: 'MUP-SERVICE',
