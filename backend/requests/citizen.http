@@ -1,5 +1,4 @@
 ### Citizen API Requests
-
 ### Kreiraj novog gradjanina
 POST http://localhost:3000/mup/citizens
 Content-Type: application/json
