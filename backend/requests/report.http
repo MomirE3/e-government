@@ -1,0 +1,11 @@
+POST http://localhost:3000/zavod/reports/survey
+Content-Type: application/json
+
+{
+  "title": "Izveštaj za test anketu",
+  "type": "survey-report",
+  "config": {
+    "filter": "all"
+  },
+  "surveyId": 1
+}

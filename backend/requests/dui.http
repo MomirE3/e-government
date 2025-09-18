@@ -1,0 +1,9 @@
+POST http://localhost:3000/zavod/reports/dui
+Content-Type: application/json
+
+{
+  "year": 2024,
+  "municipalities": ["Novi Sad", "Beograd"],
+  "ageBands": ["18-24", "25-34"],
+  "bacBands": ["0.5-1.0", "1.0+"]
+}

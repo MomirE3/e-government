@@ -14,6 +14,9 @@ import type { CreateQuestionDto } from 'apps/zavod-za-statistiku-service/src/que
 import type { CreateSampleDto } from 'apps/zavod-za-statistiku-service/src/sample/dto/sample.dto';
 import type { CreateParticipantDto } from 'apps/zavod-za-statistiku-service/src/participant/dto/create-participant.dto';
 import { SubmitAnswersDto } from 'apps/zavod-za-statistiku-service/src/answer/dto/submit-answers.dto';
+import { CreateSurveyReportDto } from 'apps/zavod-za-statistiku-service/src/report/dto/create-survey-report.dto';
+import { CreateDocsReportDto } from 'apps/zavod-za-statistiku-service/src/report/dto/create-docs-report.dto';
+import { CreateDuiReportDto } from 'apps/zavod-za-statistiku-service/src/report/dto/create-dui-report.dto';
 
 @Controller('zavod')
 export class ZavodController {
@@ -84,5 +87,25 @@ export class ZavodController {
     @Body() dto: SubmitAnswersDto,
   ) {
     return this.zavodService.send('submitAnswers', { id: '0', token, dto });
+  }
+
+  @Post('reports/dui')
+  createDuiReport(@Body() dto: CreateDuiReportDto) {
+    return this.zavodService.send('generateDuiReport', dto);
+  }
+
+  @Post('reports/docs')
+  createDocsReport(@Body() dto: CreateDocsReportDto) {
+    return this.zavodService.send('generateDocsIssuedReport', dto);
+  }
+
+  @Post('reports/survey')
+  createSurveyReport(@Body() dto: CreateSurveyReportDto) {
+    return this.zavodService.send('generateSurveyReport', dto);
+  }
+
+  @Get('reports/:id')
+  getReport(@Param('id') id: string) {
+    return this.zavodService.send('getReportById', { id: +id });
   }
 }

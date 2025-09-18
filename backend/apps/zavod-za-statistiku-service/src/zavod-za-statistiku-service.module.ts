@@ -5,9 +5,10 @@ import { SurwayModule } from './surway/surway.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RpcErrorInterceptor } from './interceptors/rpc-error.interceptor';
+import { ReportModule } from './report/report.module';
 
 @Module({
-  imports: [PrismaModule, SurwayModule],
+  imports: [PrismaModule, SurwayModule, ReportModule],
   controllers: [ZavodZaStatistikuServiceController],
   providers: [
     ZavodZaStatistikuServiceService,

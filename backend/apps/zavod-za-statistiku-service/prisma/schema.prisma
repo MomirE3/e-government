@@ -71,8 +71,8 @@ model Report {
   configJSON   String
   generatedAt  DateTime @default(now())
 
-  surveyId     Int
-  survey       Survey   @relation(fields: [surveyId], references: [id])
+  surveyId     Int?
+  survey       Survey?   @relation(fields: [surveyId], references: [id])
 
   duiIndicators  DUIIndicator[]
   docsIssued     DocsIssuedIndicator[]
