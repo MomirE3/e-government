@@ -8,7 +8,6 @@ COPY tsconfig*.json ./
 RUN npm install
 
 COPY . .
-
 # Generiši Prisma client
 RUN npx prisma generate --schema=apps/mup-gradjani-service/prisma/schema.prisma
 
