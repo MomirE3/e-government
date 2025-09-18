@@ -75,4 +75,12 @@ export class CitizenService {
 
     return this.citizenRepository.remove(id);
   }
+
+  async findByEmail(email: string): Promise<Citizen | null> {
+    return this.citizenRepository.findByEmail(email);
+  }
+
+  async createWithAuth(citizenData: any): Promise<Citizen> {
+    return this.citizenRepository.createWithAuth(citizenData);
+  }
 }

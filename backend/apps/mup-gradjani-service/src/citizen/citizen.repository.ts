@@ -133,6 +133,8 @@ export class CitizenRepository {
       lastName: citizen.lastName,
       email: citizen.email,
       phone: citizen.phone,
+      password: citizen.password || undefined,
+      role: citizen.role,
       requests: citizen.requests || [],
       infractions:
         citizen.infractions?.map((infraction) => ({
@@ -146,5 +148,49 @@ export class CitizenRepository {
         })) || [],
       address: citizen.address || null,
     };
+  }
+
+  async findByEmail(email: string): Promise<Citizen | null> {
+    const citizen = await this.prisma.citizen.findUnique({
+      where: { email },
+      include: { address: true, requests: true, infractions: true },
+    });
+
+    if (!citizen) {
+      return null;
+    }
+
+    return this.toEntity(citizen);
+  }
+
+  async createWithAuth(
+    citizenData: CreateCitizenDto & { password: string; role: string },
+  ): Promise<Citizen> {
+    const newCitizen = await this.prisma.citizen.create({
+      data: {
+        jmbg: citizenData.jmbg,
+        firstName: citizenData.firstName,
+        lastName: citizenData.lastName,
+        email: citizenData.email,
+        phone: citizenData.phone,
+        password: citizenData.password,
+        role: citizenData.role as any,
+        address: citizenData.address
+          ? {
+              create: {
+                street: citizenData.address.street,
+                number: citizenData.address.number,
+                city: citizenData.address.city,
+                postalCode: citizenData.address.postalCode,
+                country: citizenData.address.country,
+                validFrom: citizenData.address.validFrom,
+              },
+            }
+          : undefined,
+      },
+      include: { address: true, requests: true, infractions: true },
+    });
+
+    return this.toEntity(newCitizen);
   }
 }

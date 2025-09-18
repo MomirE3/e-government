@@ -1,0 +1,108 @@
+### Registracija novog građanina (vraća samo poruku, ne token)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "jmbg": "1234567890123",
+  "firstName": "Marko",
+  "lastName": "Petrović",
+  "email": "marko.petrovic@example.com",
+  "phone": "+38161234567",
+  "password": "sigurnaSifra123"
+}
+
+### Login građanina
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "marko.petrovic@example.com",
+  "password": "sigurnaSifra123"
+}
+
+### Kreiranje admin korisnika (potreban je admin token)
+POST http://localhost:3000/auth/admin/create
+Content-Type: application/json
+Authorization: Bearer YOUR_ADMIN_TOKEN_HERE
+
+{
+  "jmbg": "9876543210987",
+  "firstName": "Ana",
+  "lastName": "Jovanović",
+  "email": "ana.jovanovic@gov.rs",
+  "phone": "+38161987654",
+  "password": "adminSifra123"
+}
+
+### Provera profila (koristi token iz login odgovora)
+GET http://localhost:3000/auth/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Verifikacija tokena
+GET http://localhost:3000/auth/verify
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Logout
+POST http://localhost:3000/auth/logout
+Authorization: Bearer YOUR_TOKEN_HERE
+
+###
+### MUP servis testovi - potrebna autentifikacija
+###
+
+### Pregled svojih podataka kao građanin
+GET http://localhost:3000/mup/citizens/YOUR_CITIZEN_ID
+Authorization: Bearer YOUR_CITIZEN_TOKEN
+
+### Pregled svih građana kao admin
+GET http://localhost:3000/mup/citizens
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+### Kreiranje novog građana kao admin
+POST http://localhost:3000/mup/citizens
+Content-Type: application/json
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+{
+  "jmbg": "1111222233334",
+  "firstName": "Jovana",
+  "lastName": "Nikolić",
+  "email": "jovana.nikolic@example.com",
+  "phone": "+38162123456",
+  "address": {
+    "street": "Knez Mihailova",
+    "number": "42",
+    "city": "Beograd",
+    "postalCode": "11000",
+    "country": "Srbija",
+    "validFrom": "2024-01-01T00:00:00.000Z"
+  }
+}
+
+###
+### Zavod servis testovi - admin operacije
+###
+
+### Kreiranje ankete (samo admin)
+POST http://localhost:3000/zavod/surway
+Content-Type: application/json
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+{
+  "title": "Istraživanje zadovoljstva građana",
+  "description": "Anketa o zadovoljstvu javnim uslugama"
+}
+
+### Kreiranje izveštaja (samo admin)
+POST http://localhost:3000/zavod/reports/survey
+Content-Type: application/json
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+{
+  "surveyId": "survey_id_here",
+  "dateFrom": "2024-01-01",
+  "dateTo": "2024-12-31"
+}
+
+### Javni pristup popunjavanju ankete (ne treba autentifikacija)
+GET http://localhost:3000/zavod/surway/fill/TOKEN_FROM_EMAIL

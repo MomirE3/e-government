@@ -6,9 +6,14 @@ import {
   Param,
   Get,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ClientProxy } from '@nestjs/microservices';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enums/role.enum';
 import type { CreateSurwayDto } from 'apps/zavod-za-statistiku-service/src/surway/dto/create-surway.dto';
 import type { CreateQuestionDto } from 'apps/zavod-za-statistiku-service/src/question/dto/create-question.dto';
 import type { CreateSampleDto } from 'apps/zavod-za-statistiku-service/src/sample/dto/sample.dto';
@@ -25,26 +30,36 @@ export class ZavodController {
   ) {}
 
   @Post('surway')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createSurway(@Body() dto: CreateSurwayDto) {
     return this.zavodService.send('createSurway', dto);
   }
 
   @Post('surway/:id/questions')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createQuestion(@Param('id') id: string, @Body() dto: CreateQuestionDto) {
     return this.zavodService.send('createQuestion', { id, dto });
   }
 
   @Post('surway/:id/sample')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createSample(@Param('id') id: string, @Body() dto: CreateSampleDto) {
     return this.zavodService.send('createSample', { id, dto });
   }
 
   @Get('surway/:id/sample')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   getSample(@Param('id') id: string) {
     return this.zavodService.send('getSample', { id });
   }
 
   @Post('surway/:id/participants')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createParticipant(
     @Param('id') id: string,
     @Body() dto: CreateParticipantDto,
@@ -90,21 +105,29 @@ export class ZavodController {
   }
 
   @Post('reports/dui')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createDuiReport(@Body() dto: CreateDuiReportDto) {
     return this.zavodService.send('generateDuiReport', dto);
   }
 
   @Post('reports/docs')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createDocsReport(@Body() dto: CreateDocsReportDto) {
     return this.zavodService.send('generateDocsIssuedReport', dto);
   }
 
   @Post('reports/survey')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createSurveyReport(@Body() dto: CreateSurveyReportDto) {
     return this.zavodService.send('generateSurveyReport', dto);
   }
 
   @Get('reports/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   getReport(@Param('id') id: string) {
     return this.zavodService.send('getReportById', { id: +id });
   }

@@ -8,6 +8,8 @@ export interface Citizen {
   lastName: string;
   email: string;
   phone: string;
+  password?: string;
+  role: string;
   requests: any[];
   infractions: Infraction[];
   address: Address | null;

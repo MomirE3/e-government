@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "public"."RequestType" AS ENUM ('ID_CARD', 'PASSPORT', 'CITIZENSHIP', 'DRIVING_LICENSE');
 
@@ -13,8 +7,8 @@ CREATE TYPE "public"."RequestStatus" AS ENUM ('CREATED', 'IN_PROCESS', 'REJECTED
 -- CreateEnum
 CREATE TYPE "public"."InfractionType" AS ENUM ('DRUNK_DRIVING', 'SPEEDING', 'RED_LIGHT_VIOLATION', 'NO_SEATBELT');
 
--- DropTable
-DROP TABLE "public"."User";
+-- CreateEnum
+CREATE TYPE "public"."UserRole" AS ENUM ('ADMIN', 'CITIZEN');
 
 -- CreateTable
 CREATE TABLE "public"."citizens" (
@@ -24,6 +18,8 @@ CREATE TABLE "public"."citizens" (
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "password" TEXT,
+    "role" "public"."UserRole" NOT NULL DEFAULT 'CITIZEN',
 
     CONSTRAINT "citizens_pkey" PRIMARY KEY ("id")
 );
@@ -37,6 +33,7 @@ CREATE TABLE "public"."addresses" (
     "postalCode" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "validFrom" TIMESTAMP(3) NOT NULL,
+    "citizenId" TEXT NOT NULL,
 
     CONSTRAINT "addresses_pkey" PRIMARY KEY ("id")
 );
@@ -102,16 +99,14 @@ CREATE TABLE "public"."documents" (
     CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "public"."request_address" (
-    "requestId" TEXT NOT NULL,
-    "addressId" TEXT NOT NULL,
-
-    CONSTRAINT "request_address_pkey" PRIMARY KEY ("requestId","addressId")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "citizens_jmbg_key" ON "public"."citizens"("jmbg");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "citizens_email_key" ON "public"."citizens"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "addresses_citizenId_key" ON "public"."addresses"("citizenId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "requests_caseNumber_key" ON "public"."requests"("caseNumber");
@@ -124,6 +119,9 @@ CREATE UNIQUE INDEX "payments_requestId_key" ON "public"."payments"("requestId")
 
 -- CreateIndex
 CREATE UNIQUE INDEX "documents_requestId_key" ON "public"."documents"("requestId");
+
+-- AddForeignKey
+ALTER TABLE "public"."addresses" ADD CONSTRAINT "addresses_citizenId_fkey" FOREIGN KEY ("citizenId") REFERENCES "public"."citizens"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."requests" ADD CONSTRAINT "requests_citizenId_fkey" FOREIGN KEY ("citizenId") REFERENCES "public"."citizens"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -139,9 +137,3 @@ ALTER TABLE "public"."payments" ADD CONSTRAINT "payments_requestId_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "public"."documents" ADD CONSTRAINT "documents_requestId_fkey" FOREIGN KEY ("requestId") REFERENCES "public"."requests"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."request_address" ADD CONSTRAINT "request_address_requestId_fkey" FOREIGN KEY ("requestId") REFERENCES "public"."requests"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."request_address" ADD CONSTRAINT "request_address_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "public"."addresses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

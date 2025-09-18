@@ -39,4 +39,14 @@ export class CitizenController {
   async remove(@Payload() id: string) {
     return this.citizenService.remove(id);
   }
+
+  @MessagePattern('findCitizenByEmail')
+  async findByEmail(@Payload() data: { email: string }) {
+    return this.citizenService.findByEmail(data.email);
+  }
+
+  @MessagePattern('createCitizenWithAuth')
+  async createWithAuth(@Payload() citizenData: any) {
+    return this.citizenService.createWithAuth(citizenData);
+  }
 }

@@ -1,0 +1,114 @@
+.login-container {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 20px;
+}
+
+.login-content {
+	width: 100%;
+	max-width: 400px;
+}
+
+.login-card {
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.login-card .ant-card-cover {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 40px 30px;
+	text-align: center;
+}
+
+.login-header {
+	color: white;
+}
+
+.login-icon {
+	font-size: 48px;
+	color: white;
+	margin-bottom: 16px;
+	display: block;
+}
+
+.login-title {
+	color: white !important;
+	margin-bottom: 8px !important;
+	font-weight: 600;
+}
+
+.login-subtitle {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 16px;
+}
+
+.login-card .ant-card-body {
+	padding: 32px;
+}
+
+.login-footer {
+	text-align: center;
+	margin-top: 16px;
+}
+
+.login-footer .ant-typography {
+	margin-bottom: 8px;
+}
+
+.login-footer a {
+	color: #667eea;
+	font-weight: 500;
+}
+
+.login-footer a:hover {
+	color: #764ba2;
+}
+
+/* Form improvements */
+.ant-form-item-label > label {
+	font-weight: 500;
+	color: #2c3e50;
+}
+
+.ant-input-affix-wrapper {
+	border-radius: 8px;
+}
+
+.ant-btn-primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	height: 44px;
+}
+
+.ant-btn-primary:hover {
+	background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+	.login-container {
+		padding: 16px;
+	}
+
+	.login-card .ant-card-cover {
+		padding: 32px 20px;
+	}
+
+	.login-card .ant-card-body {
+		padding: 24px;
+	}
+
+	.login-icon {
+		font-size: 40px;
+	}
+
+	.login-title {
+		font-size: 24px !important;
+	}
+}
