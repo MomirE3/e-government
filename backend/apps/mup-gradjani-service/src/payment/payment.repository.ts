@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import type { CreatePaymentDto } from './dto/create-payment.dto';
+import type { UpdatePaymentDto } from './dto/update-payment.dto';
 import { Prisma } from '@prisma/client';
 import { Document } from '../document/entities/document.entity';
 import { Appointment } from '../appointment/entities/appointment.entity';

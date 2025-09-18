@@ -1,4 +1,17 @@
-import { RequestType, RequestStatus } from '@prisma/client';
+export enum RequestType {
+  ID_CARD = 'ID_CARD',
+  PASSPORT = 'PASSPORT',
+  CITIZENSHIP = 'CITIZENSHIP',
+  DRIVING_LICENSE = 'DRIVING_LICENSE',
+}
+
+export enum RequestStatus {
+  CREATED = 'CREATED',
+  IN_PROCESS = 'IN_PROCESS',
+  REJECTED = 'REJECTED',
+  APPROVED = 'APPROVED',
+  COMPLETED = 'COMPLETED',
+}
 
 export type CreateRequestDto = {
   caseNumber: string;
