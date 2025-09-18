@@ -45,7 +45,6 @@ export class CitizenRepository {
         infractions: true,
       },
     });
-
     return this.toEntity(citizen);
   }
 
