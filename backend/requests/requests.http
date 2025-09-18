@@ -1,46 +1,39 @@
 POST http://localhost:3000/mup/request
 Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
 
 {
   "caseNumber": "1234567890",
   "type": "ID_CARD",
   "status": "CREATED",
   "submissionDate": "2024-01-01T00:00:00.000Z",
-  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+  "citizenId": "cmfpw6xpx0002rn33pr2wqbdm"
 }
 
+### Get all requests
 GET http://localhost:3000/mup/request
 Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN_HERE
-{
-  "caseNumber": "1234567890",
-  "type": "ID_CARD",
-  "status": "CREATED",
-  "submissionDate": "2024-01-01T00:00:00.000Z",
-  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
-    }
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
 
-PUT http://localhost:3000/mup/request/1234567890
+### Get request by ID
+GET http://localhost:3000/mup/request/cmfpxfft10002s160203tl9e7
 Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Update request
+PUT http://localhost:3000/mup/request/cmfpxfft10002s160203tl9e7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
 
 {
   "caseNumber": "1234567890",
   "type": "ID_CARD",
   "status": "CREATED",
   "submissionDate": "2024-01-01T00:00:00.000Z",
-  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+  "citizenId": "cmfpw6xpx0002rn33pr2wqbdm"
 }
 
-DELETE http://localhost:3000/mup/request/1234567890
+### Delete request
+DELETE http://localhost:3000/mup/request/cmfpxfft10002s160203tl9e7
 Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN_HERE
-
-{
-  "caseNumber": "1234567890",
-  "type": "ID_CARD",
-  "status": "CREATED",
-  "submissionDate": "2024-01-01T00:00:00.000Z",
-  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c

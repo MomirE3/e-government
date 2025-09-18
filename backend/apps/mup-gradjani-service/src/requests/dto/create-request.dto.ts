@@ -1,4 +1,4 @@
-import { RequestType, RequestStatus } from '../entities/request.entity';
+import { RequestType, RequestStatus } from '@prisma/client';
 
 export type CreateRequestDto = {
   caseNumber: string;

@@ -6,7 +6,17 @@ import { Citizen } from './entities/citizen.entity';
 import { Prisma } from '@prisma/client';
 
 type PrismaCitizenWithRelations = Prisma.CitizenGetPayload<{
-  include: { address: true; requests: true; infractions: true };
+  include: {
+    address: true;
+    requests: {
+      include: {
+        appointment: true;
+        payment: true;
+        document: true;
+      };
+    };
+    infractions: true;
+  };
 }>;
 
 @Injectable()
@@ -25,7 +35,13 @@ export class CitizenRepository {
       },
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -37,7 +53,13 @@ export class CitizenRepository {
     const citizens = await this.prisma.citizen.findMany({
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -49,7 +71,13 @@ export class CitizenRepository {
       where: { id },
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -61,7 +89,13 @@ export class CitizenRepository {
       where: { jmbg },
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -90,7 +124,13 @@ export class CitizenRepository {
       data: updateData,
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -102,7 +142,13 @@ export class CitizenRepository {
       where: { id },
       include: {
         address: true,
-        requests: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
         infractions: true,
       },
     });
@@ -135,7 +181,18 @@ export class CitizenRepository {
       phone: citizen.phone,
       password: citizen.password || undefined,
       role: citizen.role,
-      requests: citizen.requests || [],
+      requests:
+        citizen.requests?.map((request) => ({
+          id: request.id,
+          caseNumber: request.caseNumber,
+          type: request.type,
+          status: request.status,
+          submissionDate: request.submissionDate.toISOString(),
+          citizenId: request.citizenId,
+          appointment: request.appointment || null,
+          payment: request.payment || null,
+          document: request.document || null,
+        })) || [],
       infractions:
         citizen.infractions?.map((infraction) => ({
           id: infraction.id,
@@ -153,7 +210,17 @@ export class CitizenRepository {
   async findByEmail(email: string): Promise<Citizen | null> {
     const citizen = await this.prisma.citizen.findUnique({
       where: { email },
-      include: { address: true, requests: true, infractions: true },
+      include: {
+        address: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
+        infractions: true,
+      },
     });
 
     if (!citizen) {
@@ -188,7 +255,17 @@ export class CitizenRepository {
             }
           : undefined,
       },
-      include: { address: true, requests: true, infractions: true },
+      include: {
+        address: true,
+        requests: {
+          include: {
+            appointment: true,
+            payment: true,
+            document: true,
+          },
+        },
+        infractions: true,
+      },
     });
 
     return this.toEntity(newCitizen);

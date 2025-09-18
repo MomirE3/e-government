@@ -169,7 +169,7 @@ export class MupController {
   @Get('request')
   @Roles(Role.ADMIN)
   findAllRequest() {
-    return this.mupService.send('findAllRequest', {});
+    return this.mupService.send('findAllRequests', {});
   }
 
   @Get('request/:id')
