@@ -4,6 +4,8 @@ import type { UpdateRequestDto } from './dto/update-request.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Request } from './entities/request.entity';
 import { Prisma } from '@prisma/client';
+import { Payment } from '../payment/entities/payment.entity';
+import { Appointment } from '../appointment/entities/appointment.entity';
 
 type PrismaRequestWithRelations = Prisma.RequestGetPayload<{
   include: { appointment: true; payment: true; document: true };
@@ -12,33 +14,44 @@ type PrismaRequestWithRelations = Prisma.RequestGetPayload<{
 @Injectable()
 export class RequestsRepository {
   constructor(private prisma: PrismaService) {}
-  create(createRequestDto: CreateRequestDto) {
-    return this.prisma.request.create({
+  async create(createRequestDto: CreateRequestDto) {
+    const request = await this.prisma.request.create({
       data: createRequestDto,
+      include: { appointment: true, payment: true, document: true },
     });
+    return this.toEntity(request);
   }
 
-  findAll() {
-    return this.prisma.request.findMany();
+  async findAll() {
+    const requests = await this.prisma.request.findMany({
+      include: { appointment: true, payment: true, document: true },
+    });
+    return requests.map((request) => this.toEntity(request));
   }
 
-  findOne(id: string) {
-    return this.prisma.request.findUnique({
+  async findOne(id: string) {
+    const request = await this.prisma.request.findUnique({
       where: { id },
+      include: { appointment: true, payment: true, document: true },
     });
+    return request ? this.toEntity(request) : null;
   }
 
-  update(id: string, updateRequestDto: UpdateRequestDto) {
-    return this.prisma.request.update({
+  async update(id: string, updateRequestDto: UpdateRequestDto) {
+    const request = await this.prisma.request.update({
       where: { id },
       data: updateRequestDto,
+      include: { appointment: true, payment: true, document: true },
     });
+    return this.toEntity(request);
   }
 
-  remove(id: string) {
-    return this.prisma.request.delete({
+  async remove(id: string) {
+    const request = await this.prisma.request.delete({
       where: { id },
+      include: { appointment: true, payment: true, document: true },
     });
+    return this.toEntity(request);
   }
 
   private toEntity(request: PrismaRequestWithRelations): Request {
@@ -49,8 +62,8 @@ export class RequestsRepository {
       status: request.status,
       submissionDate: request.submissionDate.toISOString(),
       citizenId: request.citizenId,
-      appointment: request.appointment as any,
-      payment: request.payment as any,
+      appointment: request.appointment as unknown as Appointment,
+      payment: request.payment as unknown as Payment,
       document: request.document as any,
     };
   }

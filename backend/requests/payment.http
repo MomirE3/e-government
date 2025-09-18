@@ -1,0 +1,69 @@
+### Payment API Requests
+### Kreiraj novo plaćanje
+POST http://localhost:3000/mup/payments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "amount": 2500.00,
+  "currency": "RSD",
+  "referenceNumber": "PAY-2024-001",
+  "status": "PENDING",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Kreiraj drugo plaćanje
+POST http://localhost:3000/mup/payments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "amount": 5000.00,
+  "currency": "RSD",
+  "referenceNumber": "PAY-2024-002",
+  "status": "COMPLETED",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Dobij sva plaćanja
+GET http://localhost:3000/mup/payments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij plaćanje po ID
+GET http://localhost:3000/mup/payments/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij plaćanje po request ID
+GET http://localhost:3000/mup/payments/request/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Ažuriraj plaćanje
+PUT http://localhost:3000/mup/payments/cmfq0adi50005s1a3qotrv64z
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "amount": 3000.00,
+  "status": "COMPLETED"
+}
+
+### Obriši plaćanje
+DELETE http://localhost:3000/mup/payments/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Test - pokušaj kreiranja plaćanja za isti request (treba da baci grešku)
+POST http://localhost:3000/mup/payments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+{
+  "amount": 1000.00,
+  "currency": "RSD",
+  "referenceNumber": "PAY-2024-003",
+  "status": "PENDING",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Test - pokušaj pristupa nepostojećem ID (treba da baci 404)
+GET http://localhost:3000/mup/payments/nonexistent-id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c

@@ -26,6 +26,8 @@ import type { CreateRequestDto } from 'apps/mup-gradjani-service/src/requests/dt
 import type { UpdateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/update-request.dto';
 import type { CreateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/create-appointment.dto';
 import type { UpdateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/update-appointment.dto';
+import type { CreatePaymentDto } from 'apps/mup-gradjani-service/src/payment/dto/create-payment.dto';
+import type { UpdatePaymentDto } from 'apps/mup-gradjani-service/src/payment/dto/update-payment.dto';
 
 @Controller('mup')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -234,5 +236,46 @@ export class MupController {
   @Roles(Role.ADMIN)
   removeAppointment(@Param('id') id: string) {
     return this.mupService.send('removeAppointment', id);
+  }
+
+  // Payments
+
+  @Post('payments')
+  @Roles(Role.ADMIN)
+  createPayment(@Body() body: CreatePaymentDto) {
+    return this.mupService.send('createPayment', body);
+  }
+
+  @Get('payments')
+  @Roles(Role.ADMIN)
+  findAllPayments() {
+    return this.mupService.send('findAllPayments', {});
+  }
+
+  @Get('payments/:id')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findOnePayment(@Param('id') id: string) {
+    return this.mupService.send('findOnePayment', id);
+  }
+
+  @Get('payments/request/:requestId')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findPaymentByRequestId(@Param('requestId') requestId: string) {
+    return this.mupService.send('findPaymentByRequestId', requestId);
+  }
+
+  @Put('payments/:id')
+  @Roles(Role.ADMIN)
+  updatePayment(@Param('id') id: string, @Body() body: UpdatePaymentDto) {
+    return this.mupService.send('updatePayment', {
+      id,
+      updatePaymentDto: body,
+    });
+  }
+
+  @Delete('payments/:id')
+  @Roles(Role.ADMIN)
+  removePayment(@Param('id') id: string) {
+    return this.mupService.send('removePayment', id);
   }
 }
