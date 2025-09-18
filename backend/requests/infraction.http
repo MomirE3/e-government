@@ -56,8 +56,9 @@ Content-Type: application/json
   "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
 }
 
-### 5. Get All Infractions
+### 5. Prikaz svih prekršaja (sa tokenom)
 GET http://localhost:3000/mup/infraction
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJDSVRJWkVOIiwiaWF0IjoxNzU4MjI5MzI3LCJleHAiOjE3NTgzMTU3Mjd9.4uLrDBxwn_enaHXXNiKqY4ufVD9AMDIAfv1psBjrExc
 
 ### 6. Get Infraction by ID
 GET http://localhost:3000/mup/infraction/infraction_id_here

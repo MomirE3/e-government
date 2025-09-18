@@ -1,0 +1,46 @@
+POST http://localhost:3000/mup/request
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "caseNumber": "1234567890",
+  "type": "ID_CARD",
+  "status": "CREATED",
+  "submissionDate": "2024-01-01T00:00:00.000Z",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+GET http://localhost:3000/mup/request
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+{
+  "caseNumber": "1234567890",
+  "type": "ID_CARD",
+  "status": "CREATED",
+  "submissionDate": "2024-01-01T00:00:00.000Z",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+    }
+
+PUT http://localhost:3000/mup/request/1234567890
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "caseNumber": "1234567890",
+  "type": "ID_CARD",
+  "status": "CREATED",
+  "submissionDate": "2024-01-01T00:00:00.000Z",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}
+
+DELETE http://localhost:3000/mup/request/1234567890
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "caseNumber": "1234567890",
+  "type": "ID_CARD",
+  "status": "CREATED",
+  "submissionDate": "2024-01-01T00:00:00.000Z",
+  "citizenId": "cmfjxkj5w0000o67kpzsw2jkv"
+}

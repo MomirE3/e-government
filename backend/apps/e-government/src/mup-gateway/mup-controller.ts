@@ -22,6 +22,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Role } from '../auth/enums/role.enum';
 import type { AuthUser } from '../auth/interfaces/auth-user.interface';
+import type { CreateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/create-request.dto';
+import type { UpdateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/update-request.dto';
 
 @Controller('mup')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,6 +31,8 @@ export class MupController {
   constructor(
     @Inject('MUP-SERVICE') private readonly mupService: ClientProxy,
   ) {}
+
+  // Citizens
 
   @Post('citizens')
   @Roles(Role.ADMIN)
@@ -65,6 +69,8 @@ export class MupController {
     return this.mupService.send('findOneCitizen', id);
   }
 
+  // Citizens
+
   @Put('citizens/:id')
   @Roles(Role.ADMIN, Role.CITIZEN)
   updateCitizen(
@@ -86,6 +92,8 @@ export class MupController {
   removeCitizen(@Param('id') id: string) {
     return this.mupService.send('removeCitizen', id);
   }
+
+  // Addresses
 
   @Get('address')
   @Roles(Role.ADMIN)
@@ -118,6 +126,8 @@ export class MupController {
     return this.mupService.send('findByCitizenId', citizenId);
   }
 
+  // Infractions
+
   @Post('infraction')
   @Roles(Role.ADMIN)
   createInfraction(@Body() body: CreateInfractionDto) {
@@ -146,5 +156,37 @@ export class MupController {
   @Roles(Role.ADMIN)
   removeInfraction(@Param('id') id: string) {
     return this.mupService.send('removeInfraction', id);
+  }
+
+  // Requests
+
+  @Post('request')
+  @Roles(Role.ADMIN)
+  createRequest(@Body() body: CreateRequestDto) {
+    return this.mupService.send('createRequest', body);
+  }
+
+  @Get('request')
+  @Roles(Role.ADMIN)
+  findAllRequest() {
+    return this.mupService.send('findAllRequest', {});
+  }
+
+  @Get('request/:id')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findOneRequest(@Param('id') id: string) {
+    return this.mupService.send('findOneRequest', id);
+  }
+
+  @Put('request/:id')
+  @Roles(Role.ADMIN)
+  updateRequest(@Param('id') id: string, @Body() body: UpdateRequestDto) {
+    return this.mupService.send('updateRequest', { id, body });
+  }
+
+  @Delete('request/:id')
+  @Roles(Role.ADMIN)
+  removeRequest(@Param('id') id: string) {
+    return this.mupService.send('removeRequest', id);
   }
 }
