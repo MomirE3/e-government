@@ -8,9 +8,17 @@ import { InfractionModule } from './infraction/infraction.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RpcErrorInterceptor } from './interceptors/rpc-error.interceptor';
 import { RequestsModule } from './requests/requests.module';
+import { AppointmentModule } from './appointment/appointment.module';
 
 @Module({
-  imports: [PrismaModule, CitizenModule, AddressModule, InfractionModule, RequestsModule],
+  imports: [
+    PrismaModule,
+    CitizenModule,
+    AddressModule,
+    InfractionModule,
+    RequestsModule,
+    AppointmentModule,
+  ],
   controllers: [MupGradjaniServiceController],
   providers: [
     MupGradjaniServiceService,

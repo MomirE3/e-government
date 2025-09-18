@@ -1,4 +1,5 @@
 import { RequestType, RequestStatus } from '@prisma/client';
+import { Appointment } from '../../appointment/entities/appointment.entity';
 
 export type Request = {
   id: string;
@@ -7,7 +8,7 @@ export type Request = {
   status: RequestStatus;
   submissionDate: string;
   citizenId: string;
-  appointment: any;
+  appointment: Appointment;
   payment: any;
   document: any;
 };

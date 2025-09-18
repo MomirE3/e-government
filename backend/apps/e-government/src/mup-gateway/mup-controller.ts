@@ -24,6 +24,8 @@ import { Role } from '../auth/enums/role.enum';
 import type { AuthUser } from '../auth/interfaces/auth-user.interface';
 import type { CreateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/create-request.dto';
 import type { UpdateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/update-request.dto';
+import type { CreateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/create-appointment.dto';
+import type { UpdateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/update-appointment.dto';
 
 @Controller('mup')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -188,5 +190,49 @@ export class MupController {
   @Roles(Role.ADMIN)
   removeRequest(@Param('id') id: string) {
     return this.mupService.send('removeRequest', id);
+  }
+
+  // Appointments
+
+  @Post('appointments')
+  @Roles(Role.ADMIN)
+  createAppointment(@Body() body: CreateAppointmentDto) {
+    return this.mupService.send('createAppointment', body);
+  }
+
+  @Get('appointments')
+  @Roles(Role.ADMIN)
+  findAllAppointments() {
+    return this.mupService.send('findAllAppointments', {});
+  }
+
+  @Get('appointments/:id')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findOneAppointment(@Param('id') id: string) {
+    return this.mupService.send('findOneAppointment', id);
+  }
+
+  @Get('appointments/request/:requestId')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findAppointmentByRequestId(@Param('requestId') requestId: string) {
+    return this.mupService.send('findAppointmentByRequestId', requestId);
+  }
+
+  @Put('appointments/:id')
+  @Roles(Role.ADMIN)
+  updateAppointment(
+    @Param('id') id: string,
+    @Body() body: UpdateAppointmentDto,
+  ) {
+    return this.mupService.send('updateAppointment', {
+      id,
+      updateAppointmentDto: body,
+    });
+  }
+
+  @Delete('appointments/:id')
+  @Roles(Role.ADMIN)
+  removeAppointment(@Param('id') id: string) {
+    return this.mupService.send('removeAppointment', id);
   }
 }

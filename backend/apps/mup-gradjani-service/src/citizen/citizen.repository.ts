@@ -4,6 +4,7 @@ import { CreateCitizenDto } from './dto/create-citizen.dto';
 import { UpdateCitizenDto } from './dto/update-citizen.dto';
 import { Citizen } from './entities/citizen.entity';
 import { Prisma } from '@prisma/client';
+import { Appointment } from '../appointment/entities/appointment.entity';
 
 type PrismaCitizenWithRelations = Prisma.CitizenGetPayload<{
   include: {
@@ -188,7 +189,7 @@ export class CitizenRepository {
           status: request.status,
           submissionDate: request.submissionDate.toISOString(),
           citizenId: request.citizenId,
-          appointment: request.appointment || null,
+          appointment: request.appointment as unknown as Appointment,
           payment: request.payment || null,
           document: request.document || null,
         })) || [],

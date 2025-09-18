@@ -1,0 +1,64 @@
+### Appointment API Requests
+### Kreiraj novi termin
+POST http://localhost:3000/mup/appointments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+
+{
+  "dateTime": "2024-02-15T10:00:00.000Z",
+  "location": "MUP Beograd - Savski venac",
+  "status": "SCHEDULED",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Kreiraj drugi termin
+POST http://localhost:3000/mup/appointments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+{
+  "dateTime": "2024-02-20T14:30:00.000Z",
+  "location": "MUP Novi Sad - Centar",
+  "status": "CONFIRMED",
+  "requestId": "cmfq0adi50005s1a3qotrv64z"
+}
+
+### Dobij sve termine
+GET http://localhost:3000/mup/appointments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij termin po ID
+GET http://localhost:3000/mup/appointments/cmfq0adi50005s1a3qotrv64z
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Dobij termin po request ID
+GET http://localhost:3000/mup/appointments/request/cmfpxfft10002s160203tl9e7
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+
+### Ažuriraj termin
+PUT http://localhost:3000/mup/appointments/cmfpxfft10002s160203tl9e7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+{
+  "dateTime": "2024-02-16T11:00:00.000Z",
+  "location": "MUP Beograd - Vračar",
+  "status": "CONFIRMED"
+}
+
+### Obriši termin
+DELETE http://localhost:3000/mup/appointments/cmfpxfft10002s160203tl9e7
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+### Test - pokušaj kreiranja termina za isti request (treba da baci grešku)
+POST http://localhost:3000/mup/appointments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
+{
+  "dateTime": "2024-02-25T09:00:00.000Z",
+  "location": "MUP Beograd - Savski venac",
+  "status": "SCHEDULED",
+  "requestId": "cmfpxfft10002s160203tl9e7"
+}
+
+### Test - pokušaj pristupa nepostojećem ID (treba da baci 404)
+GET http://localhost:3000/mup/appointments/nonexistent-id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZwdzZ4cHgwMDAycm4zM3ByMndxYmRtIiwiam1iZyI6IjI0MDg5OTk3NzIwNjAiLCJlbWFpbCI6Im1vbWlyQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1ODIzMDgxOSwiZXhwIjoxNzU4MzE3MjE5fQ.w6cct6y0stB0CUOsZ2THv_kpyIa8FnQwco1HVWYIr0c
