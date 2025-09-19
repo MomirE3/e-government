@@ -53,7 +53,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 						icon: <DashboardOutlined />,
 						label: 'Dashboard',
 						onClick: () => navigate('/dashboard'),
-						disabled: user?.role === 'ADMIN',
 					},
 					{
 						key: '/mup',

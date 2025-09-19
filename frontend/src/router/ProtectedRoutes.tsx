@@ -7,6 +7,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import { Request } from '../features/request/Request';
 import { Profile } from '../features/profile';
+import { MupModule } from '../features/mup';
 
 export const ProtectedRoutes: React.FC = () => {
 	const { isAuthenticated, isLoading, user } = useAuth();
@@ -44,10 +45,7 @@ export const ProtectedRoutes: React.FC = () => {
 				{user?.role === 'ADMIN' && (
 					<>
 						<Route path='/dashboard' element={<Dashboard />} />
-						<Route
-							path='/mup/*'
-							element={<div>MUP Module (Coming Soon)</div>}
-						/>
+						<Route path='/mup' element={<MupModule />} />
 						<Route
 							path='/zavod/*'
 							element={<div>Zavod Module (Admin Only)</div>}
