@@ -5,9 +5,12 @@ import { useAuth } from '../features/auth';
 import { AppLayout } from '../components/Layout/AppLayout';
 import { Dashboard } from '../pages/Dashboard';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
+import { Request } from '../features/request/Request';
 
 export const ProtectedRoutes: React.FC = () => {
 	const { isAuthenticated, isLoading, user } = useAuth();
+
+	console.log(user);
 
 	if (isLoading) {
 		return (
@@ -25,7 +28,6 @@ export const ProtectedRoutes: React.FC = () => {
 			</Layout>
 		);
 	}
-
 	if (!isAuthenticated) {
 		return <Navigate to='/auth/login' replace />;
 	}
@@ -33,29 +35,57 @@ export const ProtectedRoutes: React.FC = () => {
 	return (
 		<AppLayout>
 			<Routes>
-				<Route path='/dashboard' element={<Dashboard />} />
+				{/* Common routes */}
 				<Route path='/unauthorized' element={<UnauthorizedPage />} />
-
-				{/* MUP routes - available to all authenticated users */}
-				<Route path='/mup/*' element={<div>MUP Module (Coming Soon)</div>} />
-
-				{/* Zavod routes - admin only */}
-				{user?.role === 'ADMIN' && (
-					<Route
-						path='/zavod/*'
-						element={<div>Zavod Module (Admin Only)</div>}
-					/>
-				)}
-
-				{/* Profile routes */}
 				<Route
 					path='/profile'
 					element={<div>User Profile (Coming Soon)</div>}
 				/>
 
-				{/* Default redirect */}
-				<Route path='/' element={<Navigate to='/dashboard' replace />} />
-				<Route path='*' element={<Navigate to='/dashboard' replace />} />
+				{/* Admin routes */}
+				{user?.role === 'ADMIN' && (
+					<>
+						<Route path='/dashboard' element={<Dashboard />} />
+						<Route
+							path='/mup/*'
+							element={<div>MUP Module (Coming Soon)</div>}
+						/>
+						<Route
+							path='/zavod/*'
+							element={<div>Zavod Module (Admin Only)</div>}
+						/>
+					</>
+				)}
+
+				{/* Citizen routes */}
+				{user?.role === 'CITIZEN' && (
+					<>
+						<Route path='/request' element={<Request />} />
+						<Route path='/mup/*' element={<Navigate to='/request' replace />} />
+					</>
+				)}
+
+				{/* Role-based redirects */}
+				<Route
+					path='/'
+					element={
+						user?.role === 'ADMIN' ? (
+							<Navigate to='/dashboard' replace />
+						) : (
+							<Navigate to='/request' replace />
+						)
+					}
+				/>
+				<Route
+					path='*'
+					element={
+						user?.role === 'ADMIN' ? (
+							<Navigate to='/dashboard' replace />
+						) : (
+							<Navigate to='/request' replace />
+						)
+					}
+				/>
 			</Routes>
 		</AppLayout>
 	);

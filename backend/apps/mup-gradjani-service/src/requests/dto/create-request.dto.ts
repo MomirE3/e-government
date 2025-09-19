@@ -1,17 +1,7 @@
-export enum RequestType {
-  ID_CARD = 'ID_CARD',
-  PASSPORT = 'PASSPORT',
-  CITIZENSHIP = 'CITIZENSHIP',
-  DRIVING_LICENSE = 'DRIVING_LICENSE',
-}
-
-export enum RequestStatus {
-  CREATED = 'CREATED',
-  IN_PROCESS = 'IN_PROCESS',
-  REJECTED = 'REJECTED',
-  APPROVED = 'APPROVED',
-  COMPLETED = 'COMPLETED',
-}
+import { RequestType, RequestStatus } from '../entities/request.entity';
+import type { CreateAppointmentDto } from '../../appointment/dto/create-appointment.dto';
+import type { CreatePaymentDto } from '../../payment/dto/create-payment.dto';
+import type { CreateDocumentDto } from '../../document/dto/create-document.dto';
 
 export type CreateRequestDto = {
   caseNumber: string;
@@ -19,7 +9,7 @@ export type CreateRequestDto = {
   status: RequestStatus;
   submissionDate: string;
   citizenId: string;
-  appointment: any;
-  payment: any;
-  document: any;
+  appointment?: CreateAppointmentDto;
+  payment?: CreatePaymentDto;
+  document?: CreateDocumentDto;
 };

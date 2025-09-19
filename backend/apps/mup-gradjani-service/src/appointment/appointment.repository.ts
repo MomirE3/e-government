@@ -6,6 +6,8 @@ import { Prisma } from '@prisma/client';
 import { Payment } from '../payment/entities/payment.entity';
 import { Document } from '../document/entities/document.entity';
 import { Appointment } from './entities/appointment.entity';
+import { RequestType } from '../requests/entities/request.entity';
+import { RequestStatus } from '../requests/entities/request.entity';
 
 type PrismaAppointmentWithRelations = Prisma.AppointmentGetPayload<{
   include: {
@@ -31,7 +33,6 @@ export class AppointmentRepository {
       data: {
         dateTime: new Date(createAppointmentDto.dateTime),
         location: createAppointmentDto.location,
-        status: createAppointmentDto.status,
         requestId: createAppointmentDto.requestId,
       },
       include: {
@@ -110,9 +111,6 @@ export class AppointmentRepository {
     if (updateAppointmentDto.location) {
       updateData.location = updateAppointmentDto.location;
     }
-    if (updateAppointmentDto.status) {
-      updateData.status = updateAppointmentDto.status;
-    }
 
     const appointment = await this.prisma.appointment.update({
       where: { id },
@@ -169,14 +167,13 @@ export class AppointmentRepository {
       id: appointment.id,
       dateTime: appointment.dateTime.toISOString(),
       location: appointment.location,
-      status: appointment.status,
       requestId: appointment.requestId,
       request: appointment.request
         ? {
             id: appointment.request.id,
             caseNumber: appointment.request.caseNumber,
-            type: appointment.request.type,
-            status: appointment.request.status,
+            type: appointment.request.type as RequestType,
+            status: appointment.request.status as RequestStatus,
             submissionDate: appointment.request.submissionDate.toISOString(),
             citizenId: appointment.request.citizenId,
             appointment: appointment.request

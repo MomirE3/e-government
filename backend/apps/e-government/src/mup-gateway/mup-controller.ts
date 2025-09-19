@@ -167,13 +167,13 @@ export class MupController {
   // Requests
 
   @Post('request')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.CITIZEN)
   createRequest(@Body() body: CreateRequestDto) {
     return this.mupService.send('createRequest', body);
   }
 
   @Get('request')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.CITIZEN)
   findAllRequest() {
     return this.mupService.send('findAllRequests', {});
   }
@@ -185,13 +185,13 @@ export class MupController {
   }
 
   @Put('request/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.CITIZEN)
   updateRequest(@Param('id') id: string, @Body() body: UpdateRequestDto) {
     return this.mupService.send('updateRequest', { id, body });
   }
 
   @Delete('request/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.CITIZEN)
   removeRequest(@Param('id') id: string) {
     return this.mupService.send('removeRequest', id);
   }

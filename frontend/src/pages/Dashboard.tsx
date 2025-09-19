@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Statistic, Typography, Space } from 'antd';
+import { Card, Row, Col, Typography, Space } from 'antd';
 import {
 	UserOutlined,
 	FileTextOutlined,
@@ -55,38 +55,6 @@ export const Dashboard: React.FC = () => {
 				</Card>
 
 				{/* Statistics */}
-				<Row gutter={[16, 16]}>
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title='Ukupno korisnika'
-								value={1245}
-								prefix={<UserOutlined />}
-								valueStyle={{ color: '#3f8600' }}
-							/>
-						</Card>
-					</Col>
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title='Obrađeni zahtevi'
-								value={892}
-								prefix={<FileTextOutlined />}
-								valueStyle={{ color: '#1890ff' }}
-							/>
-						</Card>
-					</Col>
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title='Aktivne ankete'
-								value={23}
-								prefix={<BarChartOutlined />}
-								valueStyle={{ color: '#cf1322' }}
-							/>
-						</Card>
-					</Col>
-				</Row>
 
 				{/* Quick Actions */}
 				<Card title='Brzi pristup'>

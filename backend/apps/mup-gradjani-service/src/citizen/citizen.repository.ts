@@ -6,6 +6,10 @@ import { Citizen } from './entities/citizen.entity';
 import { Prisma } from '@prisma/client';
 import { Appointment } from '../appointment/entities/appointment.entity';
 import { Payment } from '../payment/entities/payment.entity';
+import { InfractionType } from '../infraction/entities/infraction.entity';
+import { Document } from '../document/entities/document.entity';
+import { RequestType } from '../requests/entities/request.entity';
+import { RequestStatus } from '../requests/entities/request.entity';
 
 type PrismaCitizenWithRelations = Prisma.CitizenGetPayload<{
   include: {
@@ -186,8 +190,8 @@ export class CitizenRepository {
         citizen.requests?.map((request) => ({
           id: request.id,
           caseNumber: request.caseNumber,
-          type: request.type,
-          status: request.status,
+          type: request.type as RequestType,
+          status: request.status as RequestStatus,
           submissionDate: request.submissionDate.toISOString(),
           citizenId: request.citizenId,
           appointment: request.appointment as unknown as Appointment,
@@ -202,7 +206,7 @@ export class CitizenRepository {
           description: infraction.description,
           penaltyPoints: infraction.penaltyPoints,
           fine: infraction.fine.toNumber(),
-          type: infraction.type,
+          type: infraction.type as InfractionType,
         })) || [],
       address: citizen.address || null,
     };

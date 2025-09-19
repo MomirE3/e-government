@@ -6,6 +6,8 @@ import { Prisma } from '@prisma/client';
 import { Document } from '../document/entities/document.entity';
 import { Appointment } from '../appointment/entities/appointment.entity';
 import { Payment } from './entities/payment.entity';
+import { RequestType } from '../requests/entities/request.entity';
+import { RequestStatus } from '../requests/entities/request.entity';
 
 type PrismaPaymentWithRelations = Prisma.PaymentGetPayload<{
   include: {
@@ -28,9 +30,7 @@ export class PaymentRepository {
     const payment = await this.prisma.payment.create({
       data: {
         amount: createPaymentDto.amount,
-        currency: createPaymentDto.currency,
         referenceNumber: createPaymentDto.referenceNumber,
-        status: createPaymentDto.status,
         requestId: createPaymentDto.requestId,
       },
       include: {
@@ -106,14 +106,8 @@ export class PaymentRepository {
     if (updatePaymentDto.amount !== undefined) {
       updateData.amount = updatePaymentDto.amount;
     }
-    if (updatePaymentDto.currency) {
-      updateData.currency = updatePaymentDto.currency;
-    }
     if (updatePaymentDto.referenceNumber) {
       updateData.referenceNumber = updatePaymentDto.referenceNumber;
-    }
-    if (updatePaymentDto.status) {
-      updateData.status = updatePaymentDto.status;
     }
 
     const payment = await this.prisma.payment.update({
@@ -170,17 +164,15 @@ export class PaymentRepository {
     return {
       id: payment.id,
       amount: payment.amount.toNumber(),
-      currency: payment.currency,
       referenceNumber: payment.referenceNumber,
-      status: payment.status,
       timestamp: payment.timestamp.toISOString(),
       requestId: payment.requestId,
       request: payment.request
         ? {
             id: payment.request.id,
             caseNumber: payment.request.caseNumber,
-            type: payment.request.type,
-            status: payment.request.status,
+            type: payment.request.type as RequestType,
+            status: payment.request.status as RequestStatus,
             submissionDate: payment.request.submissionDate.toISOString(),
             citizenId: payment.request.citizenId,
             appointment: payment.request.appointment as unknown as Appointment,

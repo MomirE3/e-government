@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { Infraction } from './entities/infraction.entity';
+import type { Infraction, InfractionType } from './entities/infraction.entity';
 import {
   Infraction as PrismaInfraction,
   InfractionType as PrismaInfractionType,
@@ -81,7 +81,7 @@ export class InfractionRepository {
       description: infraction.description,
       penaltyPoints: infraction.penaltyPoints,
       fine: infraction.fine.toNumber(),
-      type: infraction.type,
+      type: infraction.type as InfractionType,
     };
   }
 }

@@ -82,6 +82,8 @@ export class AuthService {
           lastName: citizen.lastName,
           email: citizen.email,
           role: citizen.role || Role.CITIZEN,
+          address: citizen.address,
+          infractions: citizen.infractions,
         };
       }
       return null;
@@ -113,6 +115,8 @@ export class AuthService {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        address: user.address,
+        infractions: user.infractions,
       },
     };
 
@@ -184,6 +188,8 @@ export class AuthService {
         lastName: newAdmin.lastName,
         email: newAdmin.email,
         role: Role.ADMIN,
+        address: newAdmin.address,
+        infractions: newAdmin.infractions,
       };
 
       return this.login(user);

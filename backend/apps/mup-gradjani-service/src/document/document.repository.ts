@@ -6,6 +6,8 @@ import { Prisma } from '@prisma/client';
 import { Appointment } from '../appointment/entities/appointment.entity';
 import { Payment } from '../payment/entities/payment.entity';
 import { Document } from './entities/document.entity';
+import { RequestType } from '../requests/entities/request.entity';
+import { RequestStatus } from '../requests/entities/request.entity';
 
 type PrismaDocumentWithRelations = Prisma.DocumentGetPayload<{
   include: {
@@ -173,8 +175,8 @@ export class DocumentRepository {
         ? {
             id: document.request.id,
             caseNumber: document.request.caseNumber,
-            type: document.request.type,
-            status: document.request.status,
+            type: document.request.type as RequestType,
+            status: document.request.status as RequestStatus,
             submissionDate: document.request.submissionDate.toISOString(),
             citizenId: document.request.citizenId,
             appointment: document.request.appointment as unknown as Appointment,

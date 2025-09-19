@@ -46,20 +46,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 	};
 
 	const menuItems: MenuProps['items'] = [
-		{
-			key: '/dashboard',
-			icon: <DashboardOutlined />,
-			label: 'Dashboard',
-			onClick: () => navigate('/dashboard'),
-		},
-		{
-			key: '/mup',
-			icon: <FileTextOutlined />,
-			label: 'MUP Servisi',
-			onClick: () => navigate('/mup'),
-		},
 		...(user?.role === 'ADMIN'
 			? [
+					{
+						key: '/dashboard',
+						icon: <DashboardOutlined />,
+						label: 'Dashboard',
+						onClick: () => navigate('/dashboard'),
+						disabled: user?.role === 'ADMIN',
+					},
+					{
+						key: '/mup',
+						icon: <FileTextOutlined />,
+						label: 'MUP Servisi',
+						onClick: () => navigate('/mup'),
+					},
 					{
 						key: '/zavod',
 						icon: <BarChartOutlined />,
@@ -68,12 +69,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 					},
 			  ]
 			: []),
-		{
-			key: '/profile',
-			icon: <UserOutlined />,
-			label: 'Profil',
-			onClick: () => navigate('/profile'),
-		},
 	];
 
 	const userMenuItems: MenuProps['items'] = [
