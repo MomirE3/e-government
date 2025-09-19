@@ -6,6 +6,7 @@ import { AppLayout } from '../components/Layout/AppLayout';
 import { Dashboard } from '../pages/Dashboard';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import { Request } from '../features/request/Request';
+import { Profile } from '../features/profile';
 
 export const ProtectedRoutes: React.FC = () => {
 	const { isAuthenticated, isLoading, user } = useAuth();
@@ -37,10 +38,7 @@ export const ProtectedRoutes: React.FC = () => {
 			<Routes>
 				{/* Common routes */}
 				<Route path='/unauthorized' element={<UnauthorizedPage />} />
-				<Route
-					path='/profile'
-					element={<div>User Profile (Coming Soon)</div>}
-				/>
+				<Route path='/profile' element={<Profile />} />
 
 				{/* Admin routes */}
 				{user?.role === 'ADMIN' && (

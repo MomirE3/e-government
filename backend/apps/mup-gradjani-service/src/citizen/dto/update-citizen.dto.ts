@@ -1,4 +1,4 @@
-import { CreateAddressDto } from '../../address/dto/create-address.dto';
+import { UpdateAddressDto } from '../../address/dto/update-address.dto';
 
 export class UpdateCitizenDto {
   id: string;
@@ -7,5 +7,5 @@ export class UpdateCitizenDto {
   lastName: string;
   email: string;
   phone: string;
-  address: CreateAddressDto;
+  address: UpdateAddressDto;
 }
