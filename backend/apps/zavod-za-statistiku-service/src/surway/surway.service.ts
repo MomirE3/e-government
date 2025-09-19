@@ -9,9 +9,9 @@ export class SurwayService {
     return this.surwayRepository.create(createSurwayDto);
   }
 
-  // findAll() {
-  //   return `This action returns all surway`;
-  // }
+  findAll() {
+    return this.surwayRepository.findAll();
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} surway`;
