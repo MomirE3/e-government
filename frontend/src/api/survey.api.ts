@@ -118,6 +118,18 @@ export const surveyApi = {
 		return response.data;
 	},
 
+	// Create sample for survey
+	createSample: async (
+		surveyId: string,
+		data: { size: number; criteria: string }
+	): Promise<{ id: string; size: number; criteria: string }> => {
+		const response = await apiClient.post(
+			`/zavod/surway/${surveyId}/sample`,
+			data
+		);
+		return response.data;
+	},
+
 	// Generate survey report
 	generateSurveyReport: async (
 		surveyId: string

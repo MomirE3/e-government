@@ -18,6 +18,7 @@ import {
 	UserOutlined,
 	QuestionCircleOutlined,
 	TeamOutlined,
+	DatabaseOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -29,6 +30,7 @@ import {
 import { CreateSurveyModal } from './CreateSurveyModal';
 import { AddQuestionsModal } from './AddQuestionsModal';
 import { AddParticipantsModal } from './AddParticipantsModal';
+import { CreateSampleModal } from './CreateSampleModal';
 
 const { Title, Text } = Typography;
 
@@ -37,6 +39,7 @@ export const ZavodModule: React.FC = () => {
 	const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(false);
 	const [isAddParticipantsModalOpen, setIsAddParticipantsModalOpen] =
 		useState(false);
+	const [isCreateSampleModalOpen, setIsCreateSampleModalOpen] = useState(false);
 	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
 	// Fetch all surveys
@@ -67,6 +70,11 @@ export const ZavodModule: React.FC = () => {
 		setIsAddParticipantsModalOpen(true);
 	};
 
+	const handleCreateSample = (survey: Survey) => {
+		setSelectedSurvey(survey);
+		setIsCreateSampleModalOpen(true);
+	};
+
 	const handleQuestionsModalClose = () => {
 		setIsAddQuestionsModalOpen(false);
 		setSelectedSurvey(null);
@@ -74,6 +82,11 @@ export const ZavodModule: React.FC = () => {
 
 	const handleParticipantsModalClose = () => {
 		setIsAddParticipantsModalOpen(false);
+		setSelectedSurvey(null);
+	};
+
+	const handleSampleModalClose = () => {
+		setIsCreateSampleModalOpen(false);
 		setSelectedSurvey(null);
 	};
 
@@ -93,6 +106,12 @@ export const ZavodModule: React.FC = () => {
 		message.success('Učesnici su uspešno dodati!');
 		refetchSurveys();
 		handleParticipantsModalClose();
+	};
+
+	const handleSampleSuccess = () => {
+		message.success('Uzorak je uspešno kreiran!');
+		refetchSurveys();
+		handleSampleModalClose();
 	};
 
 	const columns = [
@@ -168,6 +187,14 @@ export const ZavodModule: React.FC = () => {
 						onClick={() => handleAddParticipants(record)}
 					>
 						Učesnici
+					</Button>
+					<Button
+						type='default'
+						icon={<DatabaseOutlined />}
+						size='small'
+						onClick={() => handleCreateSample(record)}
+					>
+						Uzorak
 					</Button>
 				</Space>
 			),
@@ -294,6 +321,13 @@ export const ZavodModule: React.FC = () => {
 					onClose={handleParticipantsModalClose}
 					survey={selectedSurvey}
 					onSuccess={handleParticipantsSuccess}
+				/>
+
+				<CreateSampleModal
+					open={isCreateSampleModalOpen}
+					onClose={handleSampleModalClose}
+					survey={selectedSurvey}
+					onSuccess={handleSampleSuccess}
 				/>
 			</Space>
 		</div>
