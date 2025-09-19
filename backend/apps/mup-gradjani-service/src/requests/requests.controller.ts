@@ -18,6 +18,12 @@ export class RequestsController {
     return this.requestsService.findAll();
   }
 
+  @MessagePattern('findRequestsByCitizenId')
+  findByCitizenId(citizenId: string) {
+    console.log('findRequestsByCitizenId', citizenId);
+    return this.requestsService.findByCitizenId(citizenId);
+  }
+
   @MessagePattern('findOneRequest')
   findOne(id: string) {
     console.log('findOneRequest', id);

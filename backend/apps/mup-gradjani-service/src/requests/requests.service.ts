@@ -14,6 +14,10 @@ export class RequestsService {
     return this.requestsRepository.findAll();
   }
 
+  findByCitizenId(citizenId: string) {
+    return this.requestsRepository.findByCitizenId(citizenId);
+  }
+
   findOne(id: string) {
     return this.requestsRepository.findOne(id);
   }
