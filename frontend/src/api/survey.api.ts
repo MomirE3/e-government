@@ -94,6 +94,18 @@ export const surveyApi = {
 		return response.data;
 	},
 
+	// Create question for survey
+	createQuestion: async (
+		surveyId: string,
+		data: { text: string; type: string; required: boolean }
+	): Promise<Question> => {
+		const response = await apiClient.post(
+			`/zavod/surway/${surveyId}/questions`,
+			data
+		);
+		return response.data;
+	},
+
 	// Generate survey report
 	generateSurveyReport: async (
 		surveyId: string

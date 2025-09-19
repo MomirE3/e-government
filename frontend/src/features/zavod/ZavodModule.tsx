@@ -16,8 +16,8 @@ import {
 	BarChartOutlined,
 	FileTextOutlined,
 	UserOutlined,
-	EyeOutlined,
-	EditOutlined,
+	QuestionCircleOutlined,
+	TeamOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -27,11 +27,14 @@ import {
 	type Participant,
 } from '../../api/survey.api';
 import { CreateSurveyModal } from './CreateSurveyModal';
+import { AddQuestionsModal } from './AddQuestionsModal';
 
 const { Title, Text } = Typography;
 
 export const ZavodModule: React.FC = () => {
 	const [isCreateSurveyModalOpen, setIsCreateSurveyModalOpen] = useState(false);
+	const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(false);
+	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
 	// Fetch all surveys
 	const {
@@ -51,10 +54,26 @@ export const ZavodModule: React.FC = () => {
 		setIsCreateSurveyModalOpen(false);
 	};
 
+	const handleAddQuestions = (survey: Survey) => {
+		setSelectedSurvey(survey);
+		setIsAddQuestionsModalOpen(true);
+	};
+
+	const handleQuestionsModalClose = () => {
+		setIsAddQuestionsModalOpen(false);
+		setSelectedSurvey(null);
+	};
+
 	const handleSurveySuccess = () => {
 		message.success('Anketa je uspešno kreirana!');
 		refetchSurveys();
 		handleModalClose();
+	};
+
+	const handleQuestionsSuccess = () => {
+		message.success('Pitanja su uspešno dodana!');
+		refetchSurveys();
+		handleQuestionsModalClose();
 	};
 
 	const columns = [
@@ -113,27 +132,27 @@ export const ZavodModule: React.FC = () => {
 		{
 			title: 'Akcije',
 			key: 'actions',
-			render: () => (
-				<Space>
+			render: (record: Survey) => (
+				<Space wrap>
 					<Button
 						type='default'
-						icon={<EyeOutlined />}
+						icon={<QuestionCircleOutlined />}
 						size='small'
-						onClick={() => {
-							message.info('Pregled ankete će biti dostupan uskoro');
-						}}
+						onClick={() => handleAddQuestions(record)}
 					>
-						Pregled
+						Pitanja
 					</Button>
 					<Button
-						type='primary'
-						icon={<EditOutlined />}
+						type='default'
+						icon={<TeamOutlined />}
 						size='small'
 						onClick={() => {
-							message.info('Uređivanje ankete će biti dostupno uskoro');
+							message.info(
+								`Dodavanje učesnika za anketu "${record.title}" će biti dostupno uskoro`
+							);
 						}}
 					>
-						Uredi
+						Učesnici
 					</Button>
 				</Space>
 			),
@@ -235,7 +254,8 @@ export const ZavodModule: React.FC = () => {
 							showTotal: (total, range) =>
 								`${range[0]}-${range[1]} od ${total} anketa`,
 						}}
-						scroll={{ x: 1000 }}
+						scroll={{ x: 1200 }}
+						size='small'
 					/>
 				</Card>
 
@@ -244,6 +264,14 @@ export const ZavodModule: React.FC = () => {
 					open={isCreateSurveyModalOpen}
 					onClose={handleModalClose}
 					onSuccess={handleSurveySuccess}
+				/>
+
+				{/* Add Questions Modal */}
+				<AddQuestionsModal
+					open={isAddQuestionsModalOpen}
+					onClose={handleQuestionsModalClose}
+					survey={selectedSurvey}
+					onSuccess={handleQuestionsSuccess}
 				/>
 			</Space>
 		</div>
