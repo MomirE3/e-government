@@ -140,8 +140,8 @@ export const ZavodModule: React.FC = () => {
 			dataIndex: 'status',
 			key: 'status',
 			render: (status: string) => (
-				<Tag color={status === 'ACTIVE' ? 'green' : 'orange'}>
-					{status === 'ACTIVE' ? 'Aktivna' : 'Neaktivna'}
+				<Tag color={status === 'active' ? 'green' : 'orange'}>
+					{status === 'active' ? 'Aktivna' : 'Neaktivna'}
 				</Tag>
 			),
 		},
