@@ -117,7 +117,6 @@ model Appointment {
   id        String   @id @default(cuid())
   dateTime  DateTime
   location  String
-  status    String
 
   // Foreign key
   requestId String @unique
@@ -129,9 +128,7 @@ model Appointment {
 model Payment {
   id           String   @id @default(cuid())
   amount       Decimal  @db.Decimal(10, 2)
-  currency     String
   referenceNumber String
-  status       String
   timestamp    DateTime @default(now())
 
   // Foreign key

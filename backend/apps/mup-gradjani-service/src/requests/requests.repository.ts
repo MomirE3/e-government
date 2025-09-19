@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { CreateRequestDto } from './dto/create-request.dto';
 import type { UpdateRequestDto } from './dto/update-request.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { Request } from './entities/request.entity';
+import { Request, RequestType, RequestStatus } from './entities/request.entity';
 import { Prisma } from '@prisma/client';
 import { Payment } from '../payment/entities/payment.entity';
 import { Appointment } from '../appointment/entities/appointment.entity';
@@ -16,11 +16,34 @@ type PrismaRequestWithRelations = Prisma.RequestGetPayload<{
 export class RequestsRepository {
   constructor(private prisma: PrismaService) {}
   async create(createRequestDto: CreateRequestDto) {
-    const request = await this.prisma.request.create({
-      data: createRequestDto,
-      include: { appointment: true, payment: true, document: true },
+    return await this.prisma.$transaction(async (prisma) => {
+      const request = await prisma.request.create({
+        data: {
+          caseNumber: createRequestDto.caseNumber,
+          type: createRequestDto.type,
+          status: createRequestDto.status,
+          submissionDate: createRequestDto.submissionDate,
+          citizenId: createRequestDto.citizenId,
+          ...(createRequestDto.appointment && {
+            appointment: {
+              create: createRequestDto.appointment,
+            },
+          }),
+          ...(createRequestDto.payment && {
+            payment: {
+              create: createRequestDto.payment,
+            },
+          }),
+          ...(createRequestDto.document && {
+            document: {
+              create: createRequestDto.document,
+            },
+          }),
+        },
+        include: { appointment: true, payment: true, document: true },
+      });
+      return this.toEntity(request);
     });
-    return this.toEntity(request);
   }
 
   async findAll() {
@@ -59,8 +82,8 @@ export class RequestsRepository {
     return {
       id: request.id,
       caseNumber: request.caseNumber,
-      type: request.type,
-      status: request.status,
+      type: request.type as RequestType,
+      status: request.status as RequestStatus,
       submissionDate: request.submissionDate.toISOString(),
       citizenId: request.citizenId,
       appointment: request.appointment as unknown as Appointment,
