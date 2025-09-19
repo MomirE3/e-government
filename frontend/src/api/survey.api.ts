@@ -106,6 +106,18 @@ export const surveyApi = {
 		return response.data;
 	},
 
+	// Create participant for survey
+	createParticipant: async (
+		surveyId: string,
+		data: { contact: string }
+	): Promise<Participant> => {
+		const response = await apiClient.post(
+			`/zavod/surway/${surveyId}/participants`,
+			data
+		);
+		return response.data;
+	},
+
 	// Generate survey report
 	generateSurveyReport: async (
 		surveyId: string

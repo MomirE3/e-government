@@ -28,12 +28,15 @@ import {
 } from '../../api/survey.api';
 import { CreateSurveyModal } from './CreateSurveyModal';
 import { AddQuestionsModal } from './AddQuestionsModal';
+import { AddParticipantsModal } from './AddParticipantsModal';
 
 const { Title, Text } = Typography;
 
 export const ZavodModule: React.FC = () => {
 	const [isCreateSurveyModalOpen, setIsCreateSurveyModalOpen] = useState(false);
 	const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(false);
+	const [isAddParticipantsModalOpen, setIsAddParticipantsModalOpen] =
+		useState(false);
 	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
 	// Fetch all surveys
@@ -59,8 +62,18 @@ export const ZavodModule: React.FC = () => {
 		setIsAddQuestionsModalOpen(true);
 	};
 
+	const handleAddParticipants = (survey: Survey) => {
+		setSelectedSurvey(survey);
+		setIsAddParticipantsModalOpen(true);
+	};
+
 	const handleQuestionsModalClose = () => {
 		setIsAddQuestionsModalOpen(false);
+		setSelectedSurvey(null);
+	};
+
+	const handleParticipantsModalClose = () => {
+		setIsAddParticipantsModalOpen(false);
 		setSelectedSurvey(null);
 	};
 
@@ -74,6 +87,12 @@ export const ZavodModule: React.FC = () => {
 		message.success('Pitanja su uspešno dodana!');
 		refetchSurveys();
 		handleQuestionsModalClose();
+	};
+
+	const handleParticipantsSuccess = () => {
+		message.success('Učesnici su uspešno dodati!');
+		refetchSurveys();
+		handleParticipantsModalClose();
 	};
 
 	const columns = [
@@ -146,11 +165,7 @@ export const ZavodModule: React.FC = () => {
 						type='default'
 						icon={<TeamOutlined />}
 						size='small'
-						onClick={() => {
-							message.info(
-								`Dodavanje učesnika za anketu "${record.title}" će biti dostupno uskoro`
-							);
-						}}
+						onClick={() => handleAddParticipants(record)}
 					>
 						Učesnici
 					</Button>
@@ -272,6 +287,13 @@ export const ZavodModule: React.FC = () => {
 					onClose={handleQuestionsModalClose}
 					survey={selectedSurvey}
 					onSuccess={handleQuestionsSuccess}
+				/>
+
+				<AddParticipantsModal
+					open={isAddParticipantsModalOpen}
+					onClose={handleParticipantsModalClose}
+					survey={selectedSurvey}
+					onSuccess={handleParticipantsSuccess}
 				/>
 			</Space>
 		</div>
