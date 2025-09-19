@@ -178,6 +178,12 @@ export class MupController {
     return this.mupService.send('findAllRequests', {});
   }
 
+  @Get('request/citizen/:citizenId')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findRequestsByCitizenId(@Param('citizenId') citizenId: string) {
+    return this.mupService.send('findRequestsByCitizenId', citizenId);
+  }
+
   @Get('request/:id')
   @Roles(Role.ADMIN, Role.CITIZEN)
   findOneRequest(@Param('id') id: string) {

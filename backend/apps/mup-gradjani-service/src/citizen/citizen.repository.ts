@@ -116,12 +116,41 @@ export class CitizenRepository {
     const updateData: Prisma.CitizenUpdateInput = { ...citizenData };
 
     if (address) {
-      updateData.address = {
-        upsert: {
-          update: address,
-          create: address,
-        },
-      };
+      // Check if citizen already has an address
+      const existingCitizen = await this.prisma.citizen.findUnique({
+        where: { id },
+        include: { address: true },
+      });
+
+      if (existingCitizen?.address) {
+        // Update existing address
+        updateData.address = {
+          update: {
+            street: address.street,
+            number: address.number || '',
+            city: address.city,
+            postalCode: address.postalCode,
+            country: address.country,
+            validFrom: address.validFrom
+              ? new Date(address.validFrom)
+              : new Date(),
+          },
+        };
+      } else {
+        // Create new address
+        updateData.address = {
+          create: {
+            street: address.street,
+            number: address.number || '',
+            city: address.city,
+            postalCode: address.postalCode,
+            country: address.country,
+            validFrom: address.validFrom
+              ? new Date(address.validFrom)
+              : new Date(),
+          },
+        };
+      }
     }
 
     const citizen = await this.prisma.citizen.update({

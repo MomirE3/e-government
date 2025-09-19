@@ -14,8 +14,11 @@ import {
 	InputNumber,
 	Input,
 	Divider,
+	Table,
+	Tag,
+	Tooltip,
 } from 'antd';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../auth';
 import { requestApi, type CreateRequestData } from '../../api/request.api';
 import dayjs from 'dayjs';
@@ -33,6 +36,8 @@ export const Request: React.FC = () => {
 		onSuccess: () => {
 			message.success('Zahtev je uspešno poslat!');
 			form.resetFields();
+			// Refetch requests after successful creation
+			refetchRequests();
 		},
 		onError: (error: unknown) => {
 			console.error('Error creating request:', error);
@@ -41,6 +46,17 @@ export const Request: React.FC = () => {
 					?.message || 'Došlo je do greške prilikom slanja zahteva'
 			);
 		},
+	});
+
+	// React Query for fetching requests
+	const {
+		data: requests = [],
+		isLoading: isLoadingRequests,
+		refetch: refetchRequests,
+	} = useQuery({
+		queryKey: ['requests', user?.id],
+		queryFn: () => requestApi.getRequestsByCitizenId(user?.id || ''),
+		enabled: !!user?.id,
 	});
 
 	const requestTypes = [
@@ -67,6 +83,142 @@ export const Request: React.FC = () => {
 		{ value: 'RESIDENCE_CERTIFICATE', label: 'Potvrda o prebivalištu' },
 		{ value: 'CRIMINAL_RECORD', label: 'Potvrda o nekažnjavanju' },
 		{ value: 'OTHER', label: 'Ostalo' },
+	];
+
+	// Helper functions for formatting
+	const getRequestTypeLabel = (type: string) => {
+		const requestType = requestTypes.find((rt) => rt.value === type);
+		return requestType?.label || type;
+	};
+
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case 'CREATED':
+				return 'blue';
+			case 'IN_PROGRESS':
+				return 'orange';
+			case 'APPROVED':
+				return 'green';
+			case 'REJECTED':
+				return 'red';
+			case 'COMPLETED':
+				return 'green';
+			default:
+				return 'default';
+		}
+	};
+
+	const getStatusLabel = (status: string) => {
+		switch (status) {
+			case 'CREATED':
+				return 'Kreiran';
+			case 'IN_PROGRESS':
+				return 'U obradi';
+			case 'APPROVED':
+				return 'Odobren';
+			case 'REJECTED':
+				return 'Odbijen';
+			case 'COMPLETED':
+				return 'Završen';
+			default:
+				return status;
+		}
+	};
+
+	const getLocationLabel = (location: string) => {
+		const locationObj = appointmentLocations.find(
+			(loc) => loc.value === location
+		);
+		return locationObj?.label || location;
+	};
+
+	// Table columns definition
+	const columns = [
+		{
+			title: 'Broj slučaja',
+			dataIndex: 'caseNumber',
+			key: 'caseNumber',
+			width: 150,
+			render: (text: string) => (
+				<Tooltip title={text}>
+					<Text code style={{ fontSize: '12px' }}>
+						{text.length > 15 ? `${text.substring(0, 15)}...` : text}
+					</Text>
+				</Tooltip>
+			),
+		},
+		{
+			title: 'Tip zahteva',
+			dataIndex: 'type',
+			key: 'type',
+			width: 120,
+			render: (type: string) => getRequestTypeLabel(type),
+		},
+		{
+			title: 'Status',
+			dataIndex: 'status',
+			key: 'status',
+			width: 100,
+			render: (status: string) => (
+				<Tag color={getStatusColor(status)}>{getStatusLabel(status)}</Tag>
+			),
+		},
+		{
+			title: 'Datum podnošenja',
+			dataIndex: 'submissionDate',
+			key: 'submissionDate',
+			width: 120,
+			render: (date: string) => dayjs(date).format('DD.MM.YYYY'),
+		},
+		{
+			title: 'Termin',
+			key: 'appointment',
+			width: 150,
+			render: (record: CreateRequestData & { id: string }) => {
+				if (!record.appointment) return '-';
+				return (
+					<div>
+						<div>{dayjs(record.appointment.dateTime).format('DD.MM.YYYY')}</div>
+						<div style={{ fontSize: '12px', color: '#666' }}>
+							{dayjs(record.appointment.dateTime).format('HH:mm')}
+						</div>
+					</div>
+				);
+			},
+		},
+		{
+			title: 'Lokacija',
+			key: 'location',
+			width: 120,
+			render: (record: CreateRequestData & { id: string }) => {
+				if (!record.appointment?.location) return '-';
+				return getLocationLabel(record.appointment.location);
+			},
+		},
+		{
+			title: 'Iznos',
+			key: 'payment',
+			width: 100,
+			render: (record: CreateRequestData & { id: string }) => {
+				if (!record.payment?.amount) return '-';
+				return `${record.payment.amount.toLocaleString()} RSD`;
+			},
+		},
+		{
+			title: 'Dokument',
+			key: 'document',
+			width: 150,
+			render: (record: CreateRequestData & { id: string }) => {
+				if (!record.document) return '-';
+				return (
+					<Tooltip title={record.document.name}>
+						<Text ellipsis style={{ maxWidth: 120 }}>
+							{record.document.name}
+						</Text>
+					</Tooltip>
+				);
+			},
+		},
 	];
 
 	const handleSubmit = async (values: {
@@ -377,6 +529,37 @@ export const Request: React.FC = () => {
 							</Button>
 						</Row>
 					</Form>
+				</Card>
+
+				{/* Requests Table */}
+				<Card>
+					<Space direction='vertical' size='middle' style={{ width: '100%' }}>
+						<div>
+							<Title level={3} style={{ margin: 0 }}>
+								Moji zahtevi
+							</Title>
+							<Text type='secondary'>
+								Pregled svih vaših poslatih zahteva i njihovih statusa
+							</Text>
+						</div>
+
+						<Table
+							columns={columns}
+							dataSource={requests}
+							rowKey='id'
+							loading={isLoadingRequests}
+							pagination={{
+								pageSize: 10,
+								showSizeChanger: true,
+								showQuickJumper: true,
+								showTotal: (total, range) =>
+									`${range[0]}-${range[1]} od ${total} zahteva`,
+							}}
+							scroll={{ x: 1000 }}
+							size='small'
+							bordered
+						/>
+					</Space>
 				</Card>
 			</Space>
 		</div>

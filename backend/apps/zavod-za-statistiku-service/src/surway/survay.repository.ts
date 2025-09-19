@@ -39,9 +39,17 @@ export class SurveyRepository {
     return this.toEntity(survey);
   }
 
-  // findAll() {
-  //   return `This action returns all surway`;
-  // }
+  async findAll(): Promise<Survey[]> {
+    const surveys = await this.prisma.survey.findMany({
+      include: {
+        questions: true,
+        sample: true,
+        participants: true,
+        reports: true,
+      },
+    });
+    return surveys.map((survey) => this.toEntity(survey));
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} surway`;

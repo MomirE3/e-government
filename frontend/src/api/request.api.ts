@@ -34,6 +34,12 @@ export const requestApi = {
 		return response.data;
 	},
 
+	// Get requests by citizen ID
+	getRequestsByCitizenId: async (citizenId: string) => {
+		const response = await apiClient.get(`/mup/request/citizen/${citizenId}`);
+		return response.data;
+	},
+
 	// Get single request by ID
 	getRequest: async (id: string) => {
 		const response = await apiClient.get(`/mup/request/${id}`);

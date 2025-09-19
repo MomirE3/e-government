@@ -21,6 +21,11 @@ export class SurwayController {
     private readonly answerService: AnswerService,
   ) {}
 
+  @MessagePattern('getSurway')
+  getSurway() {
+    return this.surwayService.findAll();
+  }
+
   @MessagePattern('createSurway')
   create(dto: CreateSurwayDto) {
     return this.surwayService.create(dto);

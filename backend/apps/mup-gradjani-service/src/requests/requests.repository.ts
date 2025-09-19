@@ -46,9 +46,21 @@ export class RequestsRepository {
     });
   }
 
-  async findAll() {
+  async findAll(citizenId?: string) {
+    const whereClause = citizenId ? { citizenId } : {};
     const requests = await this.prisma.request.findMany({
+      where: whereClause,
       include: { appointment: true, payment: true, document: true },
+      orderBy: { submissionDate: 'desc' }, // Sort by newest first
+    });
+    return requests.map((request) => this.toEntity(request));
+  }
+
+  async findByCitizenId(citizenId: string) {
+    const requests = await this.prisma.request.findMany({
+      where: { citizenId },
+      include: { appointment: true, payment: true, document: true },
+      orderBy: { submissionDate: 'desc' }, // Sort by newest first
     });
     return requests.map((request) => this.toEntity(request));
   }

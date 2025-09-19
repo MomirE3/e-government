@@ -53,7 +53,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 						icon: <DashboardOutlined />,
 						label: 'Dashboard',
 						onClick: () => navigate('/dashboard'),
-						disabled: user?.role === 'ADMIN',
 					},
 					{
 						key: '/mup',
@@ -118,6 +117,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 						fontSize: collapsed ? '16px' : '18px',
 						fontWeight: 'bold',
 						borderBottom: '1px solid #002140',
+						cursor: 'pointer',
+					}}
+					onClick={() => {
+						// Navigate to role-based home page
+						if (user?.role === 'ADMIN') {
+							navigate('/dashboard');
+						} else {
+							navigate('/request');
+						}
 					}}
 				>
 					{collapsed ? 'eGov' : 'e-Government'}

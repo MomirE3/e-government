@@ -29,6 +29,13 @@ export class ZavodController {
     @Inject('ZAVOD-SERVICE') private readonly zavodService: ClientProxy,
   ) {}
 
+  @Get('surway')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  getSurway() {
+    return this.zavodService.send('getSurway', {});
+  }
+
   @Post('surway')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
