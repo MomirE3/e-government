@@ -1,0 +1,7 @@
+POST http://localhost:3000/zavod/reports/dui
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZyNnFrNTEwMDAwbXYzbXUzMmt2b3o5Iiwiam1iZyI6IjEyMzQ1Njc4OTAxMjMiLCJlbWFpbCI6Im1hcmtvLnBldHJvdmljQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MzEzMTkxLCJleHAiOjE3NTgzOTk1OTF9.sIMaBzVLcC9BAP3Nj6YrPttAkX4l8qYGpJioOo72cWY
+Content-Type: application/json
+
+{
+  "year": 2024
+}

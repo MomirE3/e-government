@@ -39,4 +39,9 @@ export class DocumentController {
   async remove(@Payload() id: string) {
     return this.documentService.remove(id);
   }
+
+  @MessagePattern('getDocsIssued')
+  getDocsIssued(dto: { periodFrom: string; periodTo: string }) {
+    return this.documentService.getDocsIssued(dto);
+  }
 }

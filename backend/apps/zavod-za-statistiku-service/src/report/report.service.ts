@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
 import { CreateDuiReportDto } from './dto/create-dui-report.dto';
 import { CreateDocsReportDto } from './dto/create-docs-report.dto';
 import { CreateSurveyReportDto } from './dto/create-survey-report.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class ReportService {
-  constructor(private repo: ReportRepository) {}
+  constructor(
+    private repo: ReportRepository,
+    @Inject('MUP-SERVICE') private readonly mupClient: ClientProxy,
+  ) {}
 
   async generateDui(dto: CreateDuiReportDto) {
     const report = await this.repo.createReport(
@@ -15,24 +20,13 @@ export class ReportService {
       dto,
     );
 
-    // MOCK podaci za sad
-    await this.repo.addDuiIndicators(report.id, [
-      {
-        year: dto.year,
-        municipality: 'Novi Sad',
-        ageBand: '18-24',
-        bacBand: '0.5-1.0',
-        caseCount: 42,
-      },
-      {
-        year: dto.year,
-        municipality: 'Beograd',
-        ageBand: '25-34',
-        bacBand: '1.0+',
-        caseCount: 33,
-      },
-    ]);
+    // dobija podatke iz MUP-a
+    const duiData = await firstValueFrom(
+      this.mupClient.send('getDuiStatistics', { year: dto.year }),
+    );
 
+    // upis u DUIIndicator tabelu
+    await this.repo.addDuiIndicators(report.id, duiData);
     return this.repo.findById(report.id);
   }
 
@@ -43,26 +37,24 @@ export class ReportService {
       dto,
     );
 
-    await this.repo.addDocsIssuedIndicators(report.id, [
-      {
-        periodFrom: new Date(dto.periodFrom),
-        periodTo: new Date(dto.periodTo),
-        documentType: 'LICNA_KARTA',
-        count: 1234,
-      },
-      {
-        periodFrom: new Date(dto.periodFrom),
-        periodTo: new Date(dto.periodTo),
-        documentType: 'PASOS',
-        count: 456,
-      },
-    ]);
+    const docsData = await firstValueFrom(
+      this.mupClient.send('getDocsIssued', {
+        periodFrom: dto.periodFrom,
+        periodTo: dto.periodTo,
+      }),
+    );
 
+    console.log('📊 docsData iz MUP-a:', docsData);
+
+    if (!Array.isArray(docsData)) {
+      throw new Error('getDocsIssued nije vratio niz!');
+    }
+
+    await this.repo.addDocsIssuedIndicators(report.id, docsData);
     return this.repo.findById(report.id);
   }
 
   async generateSurvey(dto: CreateSurveyReportDto) {
-    // Za sad samo napravi report koji referencira survey
     return this.repo.createReport(
       `Survey report ${dto.surveyId}`,
       'SURVEY',

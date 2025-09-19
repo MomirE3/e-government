@@ -1,0 +1,8 @@
+POST http://localhost:3000/zavod/reports/docs
+Content-Type: application/json
+
+{
+  "periodFrom": "2024-01-01",
+  "periodTo": "2024-12-31",
+  "title": "Izveštaj o izdavanju dokumenata"
+}

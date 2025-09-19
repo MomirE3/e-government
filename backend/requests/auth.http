@@ -3,10 +3,10 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-  "jmbg": "1234567890123",
+  "jmbg": "312321321231",
   "firstName": "Marko",
   "lastName": "Petrović",
-  "email": "marko.petrovic@example.com",
+  "email": "acamomir1@example.com",
   "phone": "+38161234567",
   "password": "sigurnaSifra123"
 }
@@ -23,7 +23,7 @@ Content-Type: application/json
 ### Kreiranje admin korisnika (potreban je admin token)
 POST http://localhost:3000/auth/admin/create
 Content-Type: application/json
-Authorization: Bearer YOUR_ADMIN_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZyNnFrNTEwMDAwbXYzbXUzMmt2b3o5Iiwiam1iZyI6IjEyMzQ1Njc4OTAxMjMiLCJlbWFpbCI6Im1hcmtvLnBldHJvdmljQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MzA3NTg0LCJleHAiOjE3NTgzOTM5ODR9.tHsztK7272pxXElHHWe27jl1G_5DzuU-riAegSRVQgk
 
 {
   "jmbg": "9876543210987",
@@ -36,11 +36,11 @@ Authorization: Bearer YOUR_ADMIN_TOKEN_HERE
 
 ### Provera profila (koristi token iz login odgovora)
 GET http://localhost:3000/auth/profile
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZyNnFrNTEwMDAwbXYzbXUzMmt2b3o5Iiwiam1iZyI6IjEyMzQ1Njc4OTAxMjMiLCJlbWFpbCI6Im1hcmtvLnBldHJvdmljQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MzA3NTg0LCJleHAiOjE3NTgzOTM5ODR9.tHsztK7272pxXElHHWe27jl1G_5DzuU-riAegSRVQgk
 
 ### Verifikacija tokena
 GET http://localhost:3000/auth/verify
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZyNnFrNTEwMDAwbXYzbXUzMmt2b3o5Iiwiam1iZyI6IjEyMzQ1Njc4OTAxMjMiLCJlbWFpbCI6Im1hcmtvLnBldHJvdmljQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MzA3NTg0LCJleHAiOjE3NTgzOTM5ODR9.tHsztK7272pxXElHHWe27jl1G_5DzuU-riAegSRVQgk
 
 ### Logout
 POST http://localhost:3000/auth/logout

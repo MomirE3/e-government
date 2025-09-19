@@ -29,7 +29,7 @@ export class DocumentRepository {
       data: {
         name: createDocumentDto.name,
         type: createDocumentDto.type,
-        issuedDate: new Date(createDocumentDto.issuedDate),
+        issuedDate: new Date(createDocumentDto.issuedDate), // ✅ promenjeno
         requestId: createDocumentDto.requestId,
       },
       include: {
@@ -109,7 +109,7 @@ export class DocumentRepository {
       updateData.type = updateDocumentDto.type;
     }
     if (updateDocumentDto.issuedDate) {
-      updateData.issuedDate = new Date(updateDocumentDto.issuedDate);
+      updateData.issuedDate = new Date(updateDocumentDto.issuedDate); // ✅
     }
 
     const document = await this.prisma.document.update({
@@ -183,5 +183,26 @@ export class DocumentRepository {
           }
         : undefined,
     };
+  }
+
+  async countByTypeAndPeriod(periodFrom: Date, periodTo: Date) {
+    const docs = await this.prisma.document.groupBy({
+      by: ['type'],
+      _count: { _all: true }, // ✅ promenjeno
+      where: {
+        issuedDate: {
+          // ✅ promenjeno
+          gte: periodFrom,
+          lte: periodTo,
+        },
+      },
+    });
+
+    return docs.map((d) => ({
+      periodFrom,
+      periodTo,
+      documentType: d.type,
+      count: d._count._all, // ✅ promenjeno
+    }));
   }
 }

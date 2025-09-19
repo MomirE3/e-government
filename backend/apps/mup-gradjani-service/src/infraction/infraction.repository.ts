@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Infraction } from './entities/infraction.entity';
@@ -83,5 +84,17 @@ export class InfractionRepository {
       fine: infraction.fine.toNumber(),
       type: infraction.type,
     };
+  }
+
+  async findByYearAndType(year: number, type: PrismaInfractionType) {
+    return this.prisma.infraction.findMany({
+      where: {
+        type,
+        dateTime: {
+          gte: new Date(`${year}-01-01`),
+          lt: new Date(`${year + 1}-01-01`),
+        },
+      },
+    });
   }
 }

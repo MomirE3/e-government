@@ -67,4 +67,11 @@ export class DocumentService {
 
     return this.documentRepository.remove(id);
   }
+
+  async getDocsIssued(dto: { periodFrom: string; periodTo: string }) {
+    return this.documentRepository.countByTypeAndPeriod(
+      new Date(dto.periodFrom),
+      new Date(dto.periodTo),
+    );
+  }
 }

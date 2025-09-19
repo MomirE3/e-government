@@ -2,8 +2,7 @@ export class DUIIndicator {
   id: number;
   year: number;
   municipality: string;
-  ageBand: string;
-  bacBand: string;
+  type: string;
   caseCount: number;
   reportId: number;
 }

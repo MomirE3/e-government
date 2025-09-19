@@ -112,8 +112,6 @@ export class ZavodController {
   }
 
   @Post('reports/docs')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
   createDocsReport(@Body() dto: CreateDocsReportDto) {
     return this.zavodService.send('generateDocsIssuedReport', dto);
   }

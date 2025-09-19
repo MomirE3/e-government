@@ -28,19 +28,24 @@ export class ReportRepository {
         reportId,
         year: r.year,
         municipality: r.municipality,
-        ageBand: r.ageBand,
-        bacBand: r.bacBand,
+        type: r.type, // ✅ koristi tip prekršaja
         caseCount: r.caseCount,
       })),
     });
   }
 
   async addDocsIssuedIndicators(reportId: number, rows: any[]) {
+    console.log('📝 rows za insert:', rows);
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return;
+    }
+
     await this.prisma.docsIssuedIndicator.createMany({
       data: rows.map((r) => ({
         reportId,
-        periodFrom: r.periodFrom,
-        periodTo: r.periodTo,
+        periodFrom: new Date(r.periodFrom),
+        periodTo: new Date(r.periodTo),
         documentType: r.documentType,
         count: r.count,
       })),

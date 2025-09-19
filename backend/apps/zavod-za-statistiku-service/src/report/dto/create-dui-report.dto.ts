@@ -7,12 +7,4 @@ export class CreateDuiReportDto {
   @IsArray()
   @IsOptional()
   municipalities?: string[];
-
-  @IsArray()
-  @IsOptional()
-  ageBands?: string[];
-
-  @IsArray()
-  @IsOptional()
-  bacBands?: string[];
 }

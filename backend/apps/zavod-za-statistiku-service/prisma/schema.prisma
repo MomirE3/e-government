@@ -82,8 +82,7 @@ model DUIIndicator {
   id           Int      @id @default(autoincrement())
   year         Int
   municipality String
-  ageBand      String
-  bacBand      String
+  type         String         
   caseCount    Int
 
   reportId     Int

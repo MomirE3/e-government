@@ -34,4 +34,9 @@ export class InfractionController {
   remove(@Param('id') id: string) {
     return this.infractionService.remove(id);
   }
+
+  @MessagePattern('getDuiStatistics')
+  getDuiStatistics(dto: { year: number }) {
+    return this.infractionService.getDuiStatistics(dto.year);
+  }
 }
