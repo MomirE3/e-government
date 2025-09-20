@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RequestsRepository } from './requests.repository';
+import { FilterRequestDto } from './dto/filter-request.dto';
 
 @Injectable()
 export class RequestsService {
@@ -12,6 +13,10 @@ export class RequestsService {
 
   findAll() {
     return this.requestsRepository.findAll();
+  }
+
+  findAllRequests(params: FilterRequestDto) {
+    return this.requestsRepository.findAllRequests(params);
   }
 
   findByCitizenId(citizenId: string) {

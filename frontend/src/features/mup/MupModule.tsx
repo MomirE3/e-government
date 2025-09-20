@@ -14,7 +14,9 @@ import {
 	UserOutlined,
 	FileTextOutlined,
 	ExclamationCircleOutlined,
+	FileSearchOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { citizenApi, type Citizen } from '../../api/citizen.api';
 import { AddInfractionModal } from './AddInfractionModal';
@@ -25,6 +27,7 @@ export const MupModule: React.FC = () => {
 	const [isAddInfractionModalOpen, setIsAddInfractionModalOpen] =
 		useState(false);
 	const [selectedCitizen, setSelectedCitizen] = useState<Citizen | null>(null);
+	const navigate = useNavigate();
 
 	// Fetch all citizens for admin (excluding admins)
 	const { data: allCitizens = [], isLoading: isLoadingCitizens } = useQuery({
@@ -107,8 +110,23 @@ export const MupModule: React.FC = () => {
 		<div style={{ padding: '24px' }}>
 			<Space direction='vertical' size='large' style={{ width: '100%' }}>
 				<div>
-					<Title level={2}>MUP Servisi</Title>
-					<Text type='secondary'>Upravljanje građanima i prekršajima</Text>
+					<Space
+						align='center'
+						style={{ width: '100%', justifyContent: 'space-between' }}
+					>
+						<div>
+							<Title level={2}>MUP Servisi</Title>
+							<Text type='secondary'>Upravljanje građanima i prekršajima</Text>
+						</div>
+						<Button
+							type='primary'
+							icon={<FileSearchOutlined />}
+							size='large'
+							onClick={() => navigate('/mup/requests')}
+						>
+							Zahtevi
+						</Button>
+					</Space>
 				</div>
 
 				{/* Statistics Cards */}

@@ -30,6 +30,7 @@ import type { CreatePaymentDto } from 'apps/mup-gradjani-service/src/payment/dto
 import type { UpdatePaymentDto } from 'apps/mup-gradjani-service/src/payment/dto/update-payment.dto';
 import type { CreateDocumentDto } from 'apps/mup-gradjani-service/src/document/dto/create-document.dto';
 import type { UpdateDocumentDto } from 'apps/mup-gradjani-service/src/document/dto/update-document.dto';
+import type { FilterRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/filter-request.dto';
 
 @Controller('mup')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -176,6 +177,12 @@ export class MupController {
   @Roles(Role.ADMIN, Role.CITIZEN)
   findAllRequest() {
     return this.mupService.send('findAllRequests', {});
+  }
+
+  @Get('request/filter')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  findAllRequests(@Query() query?: FilterRequestDto) {
+    return this.mupService.send('findAllRequestsWithFilter', query);
   }
 
   @Get('request/citizen/:citizenId')

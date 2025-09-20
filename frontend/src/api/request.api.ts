@@ -21,6 +21,37 @@ export interface CreateRequestData {
 	};
 }
 
+export interface Request {
+	id: string;
+	caseNumber: string;
+	type: string;
+	status: string;
+	submissionDate: string;
+	citizenId: string;
+	appointment?: {
+		id: string;
+		dateTime: string;
+		location: string;
+	};
+	payment?: {
+		id: string;
+		amount: number;
+		referenceNumber: string;
+	};
+	document?: {
+		id: string;
+		name: string;
+		type: string;
+		issuedDate: string;
+	};
+}
+
+export interface FilterRequestParams {
+	citizenId?: string;
+	requestStatus?: string;
+	requestType?: string;
+}
+
 export const requestApi = {
 	// Create a new request with all related data
 	createRequest: async (data: CreateRequestData) => {
@@ -55,6 +86,21 @@ export const requestApi = {
 	// Delete request
 	deleteRequest: async (id: string) => {
 		const response = await apiClient.delete(`/mup/request/${id}`);
+		return response.data;
+	},
+
+	// Filter requests with parameters
+	filterRequests: async (params: FilterRequestParams) => {
+		const queryParams = new URLSearchParams();
+		if (params.citizenId) queryParams.append('citizenId', params.citizenId);
+		if (params.requestStatus)
+			queryParams.append('requestStatus', params.requestStatus);
+		if (params.requestType)
+			queryParams.append('requestType', params.requestType);
+
+		const response = await apiClient.get(
+			`/mup/request/filter?${queryParams.toString()}`
+		);
 		return response.data;
 	},
 };

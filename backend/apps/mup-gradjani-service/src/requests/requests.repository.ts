@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client';
 import { Payment } from '../payment/entities/payment.entity';
 import { Appointment } from '../appointment/entities/appointment.entity';
 import { Document } from '../document/entities/document.entity';
+import { FilterRequestDto } from './dto/filter-request.dto';
 
 type PrismaRequestWithRelations = Prisma.RequestGetPayload<{
   include: { appointment: true; payment: true; document: true };
@@ -44,6 +45,29 @@ export class RequestsRepository {
       });
       return this.toEntity(request);
     });
+  }
+
+  async findAllRequests(params: FilterRequestDto) {
+    const { citizenId, requestStatus, requestType } = params;
+
+    // Build where clause only with provided filters
+    const whereClause: any = {};
+    if (citizenId) {
+      whereClause.citizenId = citizenId;
+    }
+    if (requestStatus) {
+      whereClause.status = requestStatus;
+    }
+    if (requestType) {
+      whereClause.type = requestType;
+    }
+
+    const requests = await this.prisma.request.findMany({
+      where: whereClause,
+      include: { appointment: true, payment: true, document: true },
+      orderBy: { submissionDate: 'desc' },
+    });
+    return requests.map((request) => this.toEntity(request));
   }
 
   async findAll(citizenId?: string) {

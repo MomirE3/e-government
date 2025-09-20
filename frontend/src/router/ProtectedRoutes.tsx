@@ -7,7 +7,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import { Request } from '../features/request/Request';
 import { Profile } from '../features/profile';
-import { MupModule } from '../features/mup';
+import { MupModule, RequestsPage } from '../features/mup';
 import { ZavodModule } from '../features/zavod';
 
 export const ProtectedRoutes: React.FC = () => {
@@ -47,6 +47,7 @@ export const ProtectedRoutes: React.FC = () => {
 					<>
 						<Route path='/dashboard' element={<Dashboard />} />
 						<Route path='/mup' element={<MupModule />} />
+						<Route path='/mup/requests' element={<RequestsPage />} />
 						<Route path='/zavod' element={<ZavodModule />} />
 					</>
 				)}

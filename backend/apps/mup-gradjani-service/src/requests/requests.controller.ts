@@ -2,7 +2,8 @@ import { Controller, Body } from '@nestjs/common';
 import { RequestsService } from './requests.service';
 import type { CreateRequestDto } from './dto/create-request.dto';
 import type { UpdateRequestDto } from './dto/update-request.dto';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import type { FilterRequestDto } from './dto/filter-request.dto';
 
 @Controller('requests')
 export class RequestsController {
@@ -16,6 +17,12 @@ export class RequestsController {
   @MessagePattern('findAllRequests')
   findAll() {
     return this.requestsService.findAll();
+  }
+
+  @MessagePattern('findAllRequestsWithFilter')
+  findAllRequests(@Payload() params: FilterRequestDto) {
+    console.log('findAllRequestsWithFilter', params);
+    return this.requestsService.findAllRequests(params);
   }
 
   @MessagePattern('findRequestsByCitizenId')
