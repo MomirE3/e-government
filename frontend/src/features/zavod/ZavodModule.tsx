@@ -31,6 +31,7 @@ import { CreateSurveyModal } from './CreateSurveyModal';
 import { AddQuestionsModal } from './AddQuestionsModal';
 import { AddParticipantsModal } from './AddParticipantsModal';
 import { CreateSampleModal } from './CreateSampleModal';
+import { CreateReportModal } from './CreateReportModal';
 
 const { Title, Text } = Typography;
 
@@ -40,6 +41,7 @@ export const ZavodModule: React.FC = () => {
 	const [isAddParticipantsModalOpen, setIsAddParticipantsModalOpen] =
 		useState(false);
 	const [isCreateSampleModalOpen, setIsCreateSampleModalOpen] = useState(false);
+	const [isCreateReportModalOpen, setIsCreateReportModalOpen] = useState(false);
 	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
 	// Fetch all surveys
@@ -75,6 +77,10 @@ export const ZavodModule: React.FC = () => {
 		setIsCreateSampleModalOpen(true);
 	};
 
+	const handleCreateReport = () => {
+		setIsCreateReportModalOpen(true);
+	};
+
 	const handleQuestionsModalClose = () => {
 		setIsAddQuestionsModalOpen(false);
 		setSelectedSurvey(null);
@@ -88,6 +94,10 @@ export const ZavodModule: React.FC = () => {
 	const handleSampleModalClose = () => {
 		setIsCreateSampleModalOpen(false);
 		setSelectedSurvey(null);
+	};
+
+	const handleReportModalClose = () => {
+		setIsCreateReportModalOpen(false);
 	};
 
 	const handleSurveySuccess = () => {
@@ -112,6 +122,11 @@ export const ZavodModule: React.FC = () => {
 		message.success('Uzorak je uspešno kreiran!');
 		refetchSurveys();
 		handleSampleModalClose();
+	};
+
+	const handleReportSuccess = () => {
+		message.success('Izveštaj je uspešno kreiran!');
+		handleReportModalClose();
 	};
 
 	const columns = [
@@ -275,13 +290,22 @@ export const ZavodModule: React.FC = () => {
 						</Space>
 					}
 					extra={
-						<Button
-							type='primary'
-							icon={<PlusOutlined />}
-							onClick={handleCreateSurvey}
-						>
-							Kreiraj anketu
-						</Button>
+						<Space>
+							<Button
+								type='default'
+								icon={<FileTextOutlined />}
+								onClick={handleCreateReport}
+							>
+								Kreiraj izveštaj
+							</Button>
+							<Button
+								type='primary'
+								icon={<PlusOutlined />}
+								onClick={handleCreateSurvey}
+							>
+								Kreiraj anketu
+							</Button>
+						</Space>
 					}
 				>
 					<Table
@@ -328,6 +352,12 @@ export const ZavodModule: React.FC = () => {
 					onClose={handleSampleModalClose}
 					survey={selectedSurvey}
 					onSuccess={handleSampleSuccess}
+				/>
+
+				<CreateReportModal
+					open={isCreateReportModalOpen}
+					onClose={handleReportModalClose}
+					onSuccess={handleReportSuccess}
 				/>
 			</Space>
 		</div>

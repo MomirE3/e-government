@@ -130,6 +130,18 @@ export const surveyApi = {
 		return response.data;
 	},
 
+	// Create DUI report
+	createDUIReport: async (data: { year: number }): Promise<{ id: string; year: number }> => {
+		const response = await apiClient.post('/zavod/reports/dui', data);
+		return response.data;
+	},
+
+	// Create docs report
+	createDocsReport: async (data: { periodFrom: string; periodTo: string; title: string }): Promise<{ id: string; title: string; periodFrom: string; periodTo: string }> => {
+		const response = await apiClient.post('/zavod/reports/docs', data);
+		return response.data;
+	},
+
 	// Generate survey report
 	generateSurveyReport: async (
 		surveyId: string
