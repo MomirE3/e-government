@@ -69,7 +69,6 @@ CREATE TABLE "public"."appointments" (
     "id" TEXT NOT NULL,
     "dateTime" TIMESTAMP(3) NOT NULL,
     "location" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
     "requestId" TEXT NOT NULL,
 
     CONSTRAINT "appointments_pkey" PRIMARY KEY ("id")
@@ -79,9 +78,7 @@ CREATE TABLE "public"."appointments" (
 CREATE TABLE "public"."payments" (
     "id" TEXT NOT NULL,
     "amount" DECIMAL(10,2) NOT NULL,
-    "currency" TEXT NOT NULL,
     "referenceNumber" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "requestId" TEXT NOT NULL,
 

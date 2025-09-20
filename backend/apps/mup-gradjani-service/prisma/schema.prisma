@@ -14,7 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // Enumerations
 enum RequestType {
   ID_CARD
@@ -45,45 +44,45 @@ enum UserRole {
 
 // Models
 model Citizen {
-  id        String @id @default(cuid())
-  jmbg      String @unique
+  id        String   @id @default(cuid())
+  jmbg      String   @unique
   firstName String
   lastName  String
-  email     String @unique
+  email     String   @unique
   phone     String
   password  String?
   role      UserRole @default(CITIZEN)
 
   // Relationships
-  requests   Request[]
+  requests    Request[]
   infractions Infraction[]
-  address Address?
+  address     Address?
 
   @@map("citizens")
 }
 
 model Address {
-  id           String   @id @default(cuid())
-  street       String
-  number       String
-  city         String
-  postalCode   String
-  country      String
-  validFrom    DateTime
+  id         String   @id @default(cuid())
+  street     String
+  number     String
+  city       String
+  postalCode String
+  country    String
+  validFrom  DateTime
 
   // One-to-one with Citizen
-  citizenId String @unique
+  citizenId String  @unique
   citizen   Citizen @relation(fields: [citizenId], references: [id])
 
   @@map("addresses")
 }
 
 model Request {
-  id              String        @id @default(cuid())
-  caseNumber      String        @unique
-  type            RequestType
-  status          RequestStatus
-  submissionDate  DateTime      @default(now())
+  id             String        @id @default(cuid())
+  caseNumber     String        @unique
+  type           RequestType
+  status         RequestStatus
+  submissionDate DateTime      @default(now())
 
   // Foreign keys
   citizenId String
@@ -98,13 +97,13 @@ model Request {
 }
 
 model Infraction {
-  id           String         @id @default(cuid())
-  dateTime     DateTime
-  municipality String
-  description  String
+  id            String         @id @default(cuid())
+  dateTime      DateTime
+  municipality  String
+  description   String
   penaltyPoints Int
-  fine         Decimal        @db.Decimal(10, 2)
-  type         InfractionType
+  fine          Decimal        @db.Decimal(10, 2)
+  type          InfractionType
 
   // Foreign key
   citizenId String
@@ -114,40 +113,39 @@ model Infraction {
 }
 
 model Appointment {
-  id        String   @id @default(cuid())
-  dateTime  DateTime
-  location  String
+  id       String   @id @default(cuid())
+  dateTime DateTime
+  location String
 
   // Foreign key
-  requestId String @unique
+  requestId String  @unique
   request   Request @relation(fields: [requestId], references: [id])
 
   @@map("appointments")
 }
 
 model Payment {
-  id           String   @id @default(cuid())
-  amount       Decimal  @db.Decimal(10, 2)
+  id              String   @id @default(cuid())
+  amount          Decimal  @db.Decimal(10, 2)
   referenceNumber String
-  timestamp    DateTime @default(now())
+  timestamp       DateTime @default(now())
 
   // Foreign key
-  requestId String @unique
+  requestId String  @unique
   request   Request @relation(fields: [requestId], references: [id])
 
   @@map("payments")
 }
 
 model Document {
-  id          String   @id @default(cuid())
-  name        String
-  type        String
-  issuedDate  DateTime
+  id         String   @id @default(cuid())
+  name       String
+  type       String
+  issuedDate DateTime
 
   // Foreign key
-  requestId String @unique
+  requestId String  @unique
   request   Request @relation(fields: [requestId], references: [id])
 
   @@map("documents")
 }
-
