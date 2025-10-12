@@ -151,9 +151,22 @@ export const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
 					<Space direction='vertical' size='small'>
 						<Text strong>Anketa:</Text>
 						<Text>{survey.title}</Text>
-						<Text type='secondary'>
-							Trenutno pitanja: {survey.questions?.length || 0}
-						</Text>
+						<Space direction='vertical' size='small' style={{ width: '100%' }}>
+							<Text strong>Trenutna pitanja:</Text>
+							{survey.questions && survey.questions.length > 0 ? (
+								<div style={{ maxHeight: '200px', overflowY: 'auto', padding: '8px', backgroundColor: '#fafafa', borderRadius: '4px' }}>
+									{survey.questions.map((question, index) => (
+										<div key={question.id || index} style={{ marginBottom: '8px', padding: '4px 0', borderBottom: index < survey.questions!.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+											<Text style={{ fontSize: '13px', lineHeight: '1.4' }}>
+												<strong>{index + 1}.</strong> {question.text}
+											</Text>
+										</div>
+									))}
+								</div>
+							) : (
+								<Text type='secondary' italic>Nema pitanja u anketi</Text>
+							)}
+						</Space>
 					</Space>
 				</Card>
 			)}

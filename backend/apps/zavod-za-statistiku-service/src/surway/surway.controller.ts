@@ -92,6 +92,11 @@ export class SurwayController {
     return this.answerService.submitAnswers(data.token, data.dto);
   }
 
+  @MessagePattern('getSurveyAnswers')
+  getSurveyAnswers(data: { id: string }) {
+    return this.answerService.getSurveyAnswers(+data.id);
+  }
+
   @MessagePattern('removeSurway')
   remove(data: { id: string }) {
     return this.surwayService.remove(+data.id);

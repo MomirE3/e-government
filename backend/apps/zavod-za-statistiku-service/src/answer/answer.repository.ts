@@ -25,4 +25,21 @@ export class AnswerRepository {
       where: { participantId },
     });
   }
+
+  async findBySurveyId(surveyId: number): Promise<Answer[]> {
+    return this.prisma.answer.findMany({
+      where: {
+        question: {
+          surveyId: surveyId,
+        },
+      },
+      include: {
+        question: true,
+        participant: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

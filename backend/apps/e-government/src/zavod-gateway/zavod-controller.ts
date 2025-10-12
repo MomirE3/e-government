@@ -150,6 +150,13 @@ export class ZavodController {
     return this.zavodService.send('submitAnswers', { id: '0', token, dto });
   }
 
+  @Get('surway/:id/answers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  getSurveyAnswers(@Param('id') id: string) {
+    return this.zavodService.send('getSurveyAnswers', { id });
+  }
+
   @Post('reports/dui')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

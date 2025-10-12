@@ -38,4 +38,21 @@ export class AnswerService {
 
     return { message: 'Survey submitted successfully' };
   }
+
+  async getSurveyAnswers(surveyId: number) {
+    return this.prisma.answer.findMany({
+      where: {
+        question: {
+          surveyId: surveyId,
+        },
+      },
+      include: {
+        question: true,
+        participant: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

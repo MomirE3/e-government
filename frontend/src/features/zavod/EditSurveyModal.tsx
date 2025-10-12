@@ -20,10 +20,12 @@ import {
 	QuestionCircleOutlined,
 	EditOutlined,
 	DeleteOutlined,
+	EyeOutlined,
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { surveyApi, type CreateSurveyData, type Question, type Survey } from '../../api/survey.api';
 import { useNavigate } from 'react-router-dom';
+import { ViewAnswersModal } from './ViewAnswersModal';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -53,6 +55,7 @@ export const EditSurveyModal: React.FC<EditSurveyModalProps> = ({
 }) => {
 	const [form] = Form.useForm();
 	const [questions, setQuestions] = useState<QuestionForm[]>([]);
+	const [showAnswersModal, setShowAnswersModal] = useState(false);
     const navigate = useNavigate();
 
 	// Update survey mutation
@@ -281,6 +284,10 @@ export const EditSurveyModal: React.FC<EditSurveyModalProps> = ({
 		form.resetFields();
 		setQuestions([]);
 		onClose();
+	};
+
+	const handleViewAnswers = () => {
+		setShowAnswersModal(true);
 	};
 
 	const questionTypes = [
@@ -524,23 +531,32 @@ export const EditSurveyModal: React.FC<EditSurveyModalProps> = ({
 				{/* Modal Footer */}
 				<Row justify='space-between' style={{ marginTop: 24 }}>
 					<Col>
-						<Popconfirm
-							title='Da li ste sigurni da želite da obrišete ovu anketu?'
-							description='Ova akcija je nepovratna!'
-							onConfirm={handleDeleteSurvey}
-							okText='Da, obriši'
-							cancelText='Otkaži'
-							okType='danger'
-						>
+						<Space>
 							<Button
-								type='primary'
-								danger
-								icon={<DeleteOutlined />}
-								loading={deleteSurveyMutation.isPending}
+								type='default'
+								icon={<EyeOutlined />}
+								onClick={handleViewAnswers}
 							>
-								Obriši anketu
+								Pregled odgovora
 							</Button>
-						</Popconfirm>
+							<Popconfirm
+								title='Da li ste sigurni da želite da obrišete ovu anketu?'
+								description='Ova akcija je nepovratna!'
+								onConfirm={handleDeleteSurvey}
+								okText='Da, obriši'
+								cancelText='Otkaži'
+								okType='danger'
+							>
+								<Button
+									type='primary'
+									danger
+									icon={<DeleteOutlined />}
+									loading={deleteSurveyMutation.isPending}
+								>
+									Obriši anketu
+								</Button>
+							</Popconfirm>
+						</Space>
 					</Col>
 					<Col>
 						<Space>
@@ -559,6 +575,13 @@ export const EditSurveyModal: React.FC<EditSurveyModalProps> = ({
 					</Col>
 				</Row>
 			</Form>
+
+			{/* View Answers Modal */}
+			<ViewAnswersModal
+				open={showAnswersModal}
+				onClose={() => setShowAnswersModal(false)}
+				survey={survey}
+			/>
 		</Modal>
 	);
 };

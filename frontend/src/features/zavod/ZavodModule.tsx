@@ -20,6 +20,7 @@ import {
 	TeamOutlined,
 	DatabaseOutlined,
 	EditOutlined,
+	EyeOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -34,6 +35,7 @@ import { AddQuestionsModal } from './AddQuestionsModal';
 import { AddParticipantsModal } from './AddParticipantsModal';
 import { CreateSampleModal } from './CreateSampleModal';
 import { CreateReportModal } from './CreateReportModal';
+import { ViewAnswersModal } from './ViewAnswersModal';
 
 const { Title, Text } = Typography;
 
@@ -45,6 +47,7 @@ export const ZavodModule: React.FC = () => {
 		useState(false);
 	const [isCreateSampleModalOpen, setIsCreateSampleModalOpen] = useState(false);
 	const [isCreateReportModalOpen, setIsCreateReportModalOpen] = useState(false);
+	const [isViewAnswersModalOpen, setIsViewAnswersModalOpen] = useState(false);
 	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 	
 	const queryClient = useQueryClient();
@@ -61,7 +64,7 @@ export const ZavodModule: React.FC = () => {
 
 	// Update survey status mutation
 	const updateStatusMutation = useMutation({
-		mutationFn: ({ id, status }: { id: string; status: 'ACTIVE' | 'INACTIVE' }) =>
+		mutationFn: ({ id, status }: { id: number; status: 'ACTIVE' | 'INACTIVE' }) =>
 			surveyApi.updateSurveyStatus(id, status),
 		onSuccess: () => {
 			message.success('Status ankete je uspešno ažuriran!');
@@ -113,6 +116,11 @@ export const ZavodModule: React.FC = () => {
 		setIsCreateReportModalOpen(true);
 	};
 
+	const handleViewAnswers = (survey: Survey) => {
+		setSelectedSurvey(survey);
+		setIsViewAnswersModalOpen(true);
+	};
+
 	const handleQuestionsModalClose = () => {
 		setIsAddQuestionsModalOpen(false);
 		setSelectedSurvey(null);
@@ -130,6 +138,11 @@ export const ZavodModule: React.FC = () => {
 
 	const handleReportModalClose = () => {
 		setIsCreateReportModalOpen(false);
+	};
+
+	const handleAnswersModalClose = () => {
+		setIsViewAnswersModalOpen(false);
+		setSelectedSurvey(null);
 	};
 
 	const handleSurveySuccess = () => {
@@ -273,6 +286,14 @@ export const ZavodModule: React.FC = () => {
 						onClick={() => handleCreateSample(record)}
 					>
 						Uzorak
+					</Button>
+					<Button
+						type='default'
+						icon={<EyeOutlined />}
+						size='small'
+						onClick={() => handleViewAnswers(record)}
+					>
+						Odgovori
 					</Button>
 				</Space>
 			),
@@ -429,6 +450,12 @@ export const ZavodModule: React.FC = () => {
 					open={isCreateReportModalOpen}
 					onClose={handleReportModalClose}
 					onSuccess={handleReportSuccess}
+				/>
+
+				<ViewAnswersModal
+					open={isViewAnswersModalOpen}
+					onClose={handleAnswersModalClose}
+					survey={selectedSurvey}
 				/>
 			</Space>
 		</div>

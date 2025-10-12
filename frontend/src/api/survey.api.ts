@@ -1,7 +1,7 @@
 import { apiClient } from './axios';
 
 export interface Question {
-	id?: string;
+	id?: number;
 	text: string;
 	type: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE' | 'RATING';
 	options?: string[];
@@ -9,23 +9,33 @@ export interface Question {
 }
 
 export interface Participant {
-	id: string;
+	id: number;
 	contact: string;
 	createdAt: string;
 	updatedAt: string;
 }
 
 export interface Answer {
-	id: string;
-	questionId: string;
-	participantId: string;
-	answer: string;
+	id: number;
+	questionId: number;
+	participantId: number;
+	value: string;
 	createdAt: string;
-	updatedAt: string;
+	updatedAt?: string;
+	question?: {
+		id: number;
+		text: string;
+		type: string;
+	};
+	participant?: {
+		id: number;
+		contact: string;
+		status: string;
+	};
 }
 
 export interface Survey {
-	id: string;
+	id: number;
 	title: string;
 	description: string;
 	period: string;
@@ -64,30 +74,30 @@ export const surveyApi = {
 	},
 
 	// Get single survey by ID
-	getSurvey: async (id: string): Promise<Survey> => {
+	getSurvey: async (id: number): Promise<Survey> => {
 		const response = await apiClient.get(`/zavod/surway/${id}`);
 		return response.data;
 	},
 
 	// Update survey
-	updateSurvey: async (id: string, data: UpdateSurveyData): Promise<Survey> => {
+	updateSurvey: async (id: number, data: UpdateSurveyData): Promise<Survey> => {
 		const response = await apiClient.put(`/zavod/surway/${id}`, data);
 		return response.data;
 	},
 
 	// Update survey status
-	updateSurveyStatus: async (id: string, status: 'ACTIVE' | 'INACTIVE'): Promise<Survey> => {
+	updateSurveyStatus: async (id: number, status: 'ACTIVE' | 'INACTIVE'): Promise<Survey> => {
 		const response = await apiClient.patch(`/zavod/surway/${id}/status`, { status });
 		return response.data;
 	},
 
 	// Delete survey
-	deleteSurvey: async (id: string): Promise<void> => {
+	deleteSurvey: async (id: number): Promise<void> => {
 		await apiClient.delete(`/zavod/surway/${id}`);
 	},
 
 	// Get survey participants
-	getSurveyParticipants: async (surveyId: string): Promise<Participant[]> => {
+	getSurveyParticipants: async (surveyId: number): Promise<Participant[]> => {
 		const response = await apiClient.get(
 			`/zavod/surway/${surveyId}/participants`
 		);
@@ -95,14 +105,14 @@ export const surveyApi = {
 	},
 
 	// Get survey answers
-	getSurveyAnswers: async (surveyId: string): Promise<Answer[]> => {
+	getSurveyAnswers: async (surveyId: number): Promise<Answer[]> => {
 		const response = await apiClient.get(`/zavod/surway/${surveyId}/answers`);
 		return response.data;
 	},
 
 	// Create question for survey
 	createQuestion: async (
-		surveyId: string,
+		surveyId: number,
 		data: { text: string; type: string; required: boolean }
 	): Promise<Question> => {
 		const response = await apiClient.post(
@@ -114,7 +124,7 @@ export const surveyApi = {
 
 	// Update question
 	updateQuestion: async (
-		questionId: string,
+		questionId: number,
 		data: { text: string; type: string; required: boolean }
 	): Promise<Question> => {
 		const response = await apiClient.put(`/zavod/questions/${questionId}`, data);
@@ -122,13 +132,13 @@ export const surveyApi = {
 	},
 
 	// Delete question
-	deleteQuestion: async (questionId: string): Promise<void> => {
+	deleteQuestion: async (questionId: number): Promise<void> => {
 		await apiClient.delete(`/zavod/questions/${questionId}`);
 	},
 
 	// Create multiple questions for survey
 	createQuestions: async (
-		surveyId: string,
+		surveyId: number,
 		questions: Omit<Question, 'id'>[]
 	): Promise<Question[]> => {
 		const promises = questions.map(question => 
@@ -143,7 +153,7 @@ export const surveyApi = {
 
 	// Create participant for survey
 	createParticipant: async (
-		surveyId: string,
+		surveyId: number,
 		data: { contact: string }
 	): Promise<Participant> => {
 		const response = await apiClient.post(
@@ -155,9 +165,9 @@ export const surveyApi = {
 
 	// Create sample for survey
 	createSample: async (
-		surveyId: string,
+		surveyId: number,
 		data: { size: number; criteria: string }
-	): Promise<{ id: string; size: number; criteria: string }> => {
+	): Promise<{ id: number; size: number; criteria: string }> => {
 		const response = await apiClient.post(
 			`/zavod/surway/${surveyId}/sample`,
 			data
@@ -179,7 +189,7 @@ export const surveyApi = {
 
 	// Generate survey report
 	generateSurveyReport: async (
-		surveyId: string
+		surveyId: number
 	): Promise<{
 		survey: Survey;
 		participants: Participant[];
