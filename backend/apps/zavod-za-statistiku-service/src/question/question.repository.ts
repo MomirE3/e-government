@@ -38,4 +38,18 @@ export class QuestionRepository {
     });
     return prismaQ.map((q) => this.toEntity(q));
   }
+
+  async update(id: number, dto: CreateQuestionDto): Promise<Question> {
+    const prismaQ = await this.prisma.question.update({
+      where: { id },
+      data: dto,
+    });
+    return this.toEntity(prismaQ);
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.question.delete({
+      where: { id },
+    });
+  }
 }

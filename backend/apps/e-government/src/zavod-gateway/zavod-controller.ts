@@ -1,6 +1,9 @@
 import {
   Controller,
   Post,
+  Put,
+  Patch,
+  Delete,
   Inject,
   Body,
   Param,
@@ -15,6 +18,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/enums/role.enum';
 import type { CreateSurwayDto } from 'apps/zavod-za-statistiku-service/src/surway/dto/create-surway.dto';
+import type { UpdateSurwayDto } from 'apps/zavod-za-statistiku-service/src/surway/dto/update-surway.dto';
 import type { CreateQuestionDto } from 'apps/zavod-za-statistiku-service/src/question/dto/create-question.dto';
 import type { CreateSampleDto } from 'apps/zavod-za-statistiku-service/src/sample/dto/sample.dto';
 import type { CreateParticipantDto } from 'apps/zavod-za-statistiku-service/src/participant/dto/create-participant.dto';
@@ -43,11 +47,46 @@ export class ZavodController {
     return this.zavodService.send('createSurway', dto);
   }
 
+  @Put('surway/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  updateSurway(@Param('id') id: string, @Body() dto: UpdateSurwayDto) {
+    return this.zavodService.send('updateSurway', { id, dto });
+  }
+
+  @Patch('surway/:id/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  updateSurwayStatus(@Param('id') id: string, @Body() body: { status: string }) {
+    return this.zavodService.send('updateSurwayStatus', { id, status: body.status });
+  }
+
+  @Delete('surway/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  deleteSurway(@Param('id') id: string) {
+    return this.zavodService.send('removeSurway', { id });
+  }
+
   @Post('surway/:id/questions')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   createQuestion(@Param('id') id: string, @Body() dto: CreateQuestionDto) {
     return this.zavodService.send('createQuestion', { id, dto });
+  }
+
+  @Put('questions/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  updateQuestion(@Param('id') id: string, @Body() dto: CreateQuestionDto) {
+    return this.zavodService.send('updateQuestion', { id, dto });
+  }
+
+  @Delete('questions/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  deleteQuestion(@Param('id') id: string) {
+    return this.zavodService.send('deleteQuestion', { id });
   }
 
   @Post('surway/:id/sample')

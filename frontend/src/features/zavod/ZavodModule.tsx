@@ -19,8 +19,9 @@ import {
 	QuestionCircleOutlined,
 	TeamOutlined,
 	DatabaseOutlined,
+	EditOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	surveyApi,
 	type Survey,
@@ -28,6 +29,7 @@ import {
 	type Participant,
 } from '../../api/survey.api';
 import { CreateSurveyModal } from './CreateSurveyModal';
+import { EditSurveyModal } from './EditSurveyModal';
 import { AddQuestionsModal } from './AddQuestionsModal';
 import { AddParticipantsModal } from './AddParticipantsModal';
 import { CreateSampleModal } from './CreateSampleModal';
@@ -37,12 +39,15 @@ const { Title, Text } = Typography;
 
 export const ZavodModule: React.FC = () => {
 	const [isCreateSurveyModalOpen, setIsCreateSurveyModalOpen] = useState(false);
+	const [isEditSurveyModalOpen, setIsEditSurveyModalOpen] = useState(false);
 	const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(false);
 	const [isAddParticipantsModalOpen, setIsAddParticipantsModalOpen] =
 		useState(false);
 	const [isCreateSampleModalOpen, setIsCreateSampleModalOpen] = useState(false);
 	const [isCreateReportModalOpen, setIsCreateReportModalOpen] = useState(false);
 	const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
+	
+	const queryClient = useQueryClient();
 
 	// Fetch all surveys
 	const {
@@ -54,12 +59,39 @@ export const ZavodModule: React.FC = () => {
 		queryFn: surveyApi.getAllSurveys,
 	});
 
+	// Update survey status mutation
+	const updateStatusMutation = useMutation({
+		mutationFn: ({ id, status }: { id: string; status: 'ACTIVE' | 'INACTIVE' }) =>
+			surveyApi.updateSurveyStatus(id, status),
+		onSuccess: () => {
+			message.success('Status ankete je uspešno ažuriran!');
+			queryClient.invalidateQueries({ queryKey: ['surveys'] });
+		},
+		onError: (error: unknown) => {
+			console.error('Error updating survey status:', error);
+			message.error(
+				(error as { response?: { data?: { message: string } } }).response?.data
+					?.message || 'Došlo je do greške prilikom ažuriranja statusa'
+			);
+		},
+	});
+
 	const handleCreateSurvey = () => {
 		setIsCreateSurveyModalOpen(true);
 	};
 
+	const handleEditSurvey = (survey: Survey) => {
+		setSelectedSurvey(survey);
+		setIsEditSurveyModalOpen(true);
+	};
+
 	const handleModalClose = () => {
 		setIsCreateSurveyModalOpen(false);
+	};
+
+	const handleEditModalClose = () => {
+		setIsEditSurveyModalOpen(false);
+		setSelectedSurvey(null);
 	};
 
 	const handleAddQuestions = (survey: Survey) => {
@@ -106,6 +138,12 @@ export const ZavodModule: React.FC = () => {
 		handleModalClose();
 	};
 
+	const handleEditSuccess = () => {
+		message.success('Anketa je uspešno ažurirana!');
+		refetchSurveys();
+		handleEditModalClose();
+	};
+
 	const handleQuestionsSuccess = () => {
 		message.success('Pitanja su uspešno dodana!');
 		refetchSurveys();
@@ -127,6 +165,14 @@ export const ZavodModule: React.FC = () => {
 	const handleReportSuccess = () => {
 		message.success('Izveštaj je uspešno kreiran!');
 		handleReportModalClose();
+	};
+
+	const handleStatusToggle = (survey: Survey) => {
+		const newStatus = survey.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+		updateStatusMutation.mutate({
+			id: survey.id,
+			status: newStatus,
+		});
 	};
 
 	const columns = [
@@ -154,9 +200,18 @@ export const ZavodModule: React.FC = () => {
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
-			render: (status: string) => (
-				<Tag color={status === 'active' ? 'green' : 'orange'}>
-					{status === 'active' ? 'Aktivna' : 'Neaktivna'}
+			render: (status: string, record: Survey) => (
+				<Tag 
+					color={status === 'ACTIVE' ? 'green' : 'orange'}
+					style={{ 
+						cursor: 'pointer',
+						userSelect: 'none',
+						transition: 'all 0.2s ease'
+					}}
+					onClick={() => handleStatusToggle(record)}
+					title={`Kliknite da promenite status u ${status === 'ACTIVE' ? 'Neaktivna' : 'Aktivna'}`}
+				>
+					{status === 'ACTIVE' ? 'Aktivna' : 'Neaktivna'}
 				</Tag>
 			),
 		},
@@ -175,11 +230,11 @@ export const ZavodModule: React.FC = () => {
 			),
 		},
 		{
-			title: 'Datum kreiranja',
-			dataIndex: 'createdAt',
-			key: 'createdAt',
-			render: (date: string) => (
-				<Text>{new Date(date).toLocaleDateString('sr-RS')}</Text>
+			title: 'Period',
+			dataIndex: 'period',
+			key: 'period',
+			render: (period: string) => (
+				<Text>{period}</Text>
 			),
 		},
 		{
@@ -187,6 +242,14 @@ export const ZavodModule: React.FC = () => {
 			key: 'actions',
 			render: (record: Survey) => (
 				<Space wrap>
+					<Button
+						type='primary'
+						icon={<EditOutlined />}
+						size='small'
+						onClick={() => handleEditSurvey(record)}
+					>
+						Uredi
+					</Button>
 					<Button
 						type='default'
 						icon={<QuestionCircleOutlined />}
@@ -330,6 +393,14 @@ export const ZavodModule: React.FC = () => {
 					open={isCreateSurveyModalOpen}
 					onClose={handleModalClose}
 					onSuccess={handleSurveySuccess}
+				/>
+
+				{/* Edit Survey Modal */}
+				<EditSurveyModal
+					open={isEditSurveyModalOpen}
+					onClose={handleEditModalClose}
+					onSuccess={handleEditSuccess}
+					survey={selectedSurvey}
 				/>
 
 				{/* Add Questions Modal */}

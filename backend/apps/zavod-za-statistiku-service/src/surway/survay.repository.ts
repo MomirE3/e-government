@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSurwayDto } from './dto/create-surway.dto';
+import { UpdateSurwayDto } from './dto/update-surway.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { Survey } from './entities/surway.entity';
@@ -55,11 +56,38 @@ export class SurveyRepository {
   //   return `This action returns a #${id} surway`;
   // }
 
-  // update(id: number, updateSurwayDto: UpdateSurwayDto) {
-  //   return `This action updates a #${id} surway`;
-  // }
+  async update(id: number, updateSurwayDto: UpdateSurwayDto): Promise<Survey> {
+    const survey = await this.prisma.survey.update({
+      where: { id },
+      data: updateSurwayDto,
+      include: {
+        questions: true,
+        sample: true,
+        participants: true,
+        reports: true,
+      },
+    });
+    return this.toEntity(survey);
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} surway`;
-  // }
+  async updateStatus(id: number, status: string): Promise<Survey> {
+    const survey = await this.prisma.survey.update({
+      where: { id },
+      data: { status },
+      include: {
+        questions: true,
+        sample: true,
+        participants: true,
+        reports: true,
+      },
+    });
+    return this.toEntity(survey);
+  }
+
+  async remove(id: number): Promise<void> {
+    // Prisma will handle cascade deletion automatically due to onDelete: Cascade
+    await this.prisma.survey.delete({
+      where: { id },
+    });
+  }
 }

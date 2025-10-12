@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSurwayDto } from './dto/create-surway.dto';
+import { UpdateSurwayDto } from './dto/update-surway.dto';
 import { SurveyRepository } from './survay.repository';
 
 @Injectable()
@@ -17,11 +18,15 @@ export class SurwayService {
   //   return `This action returns a #${id} surway`;
   // }
 
-  // update(id: number, updateSurwayDto: UpdateSurwayDto) {
-  //   return `This action updates a #${id} surway`;
-  // }
+  update(id: number, updateSurwayDto: UpdateSurwayDto) {
+    return this.surwayRepository.update(id, updateSurwayDto);
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} surway`;
-  // }
+  updateStatus(id: number, status: string) {
+    return this.surwayRepository.updateStatus(id, status);
+  }
+
+  remove(id: number) {
+    return this.surwayRepository.remove(id);
+  }
 }

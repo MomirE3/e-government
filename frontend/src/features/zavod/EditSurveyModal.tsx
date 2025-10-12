@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Modal,
 	Form,
@@ -12,23 +12,28 @@ import {
 	message,
 	Divider,
 	Card,
+	Popconfirm,
 } from 'antd';
 import {
 	PlusOutlined,
 	MinusCircleOutlined,
 	QuestionCircleOutlined,
+	EditOutlined,
+	DeleteOutlined,
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { surveyApi, type CreateSurveyData, type Question } from '../../api/survey.api';
+import { surveyApi, type CreateSurveyData, type Question, type Survey } from '../../api/survey.api';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
-interface CreateSurveyModalProps {
+interface EditSurveyModalProps {
 	open: boolean;
 	onClose: () => void;
 	onSuccess: () => void;
+	survey: Survey | null;
 }
 
 interface QuestionForm {
@@ -37,54 +42,131 @@ interface QuestionForm {
 	type: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE' | 'RATING';
 	options?: string[];
 	required: boolean;
+	isNew?: boolean; // Flag to track if question is newly added
 }
 
-export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
+export const EditSurveyModal: React.FC<EditSurveyModalProps> = ({
 	open,
 	onClose,
 	onSuccess,
+	survey,
 }) => {
 	const [form] = Form.useForm();
 	const [questions, setQuestions] = useState<QuestionForm[]>([]);
+    const navigate = useNavigate();
 
-	// Create survey mutation
-	const createSurveyMutation = useMutation({
-		mutationFn: async (data: { surveyData: CreateSurveyData; questions: Omit<Question, 'id'>[] }) => {
-			// First create the survey
-			const survey = await surveyApi.createSurvey(data.surveyData);
-			
-			// Then create questions if any
-			if (data.questions.length > 0) {
-				await surveyApi.createQuestions(survey.id, data.questions);
-			}
-			
-			return survey;
-		},
+	// Update survey mutation
+	const updateSurveyMutation = useMutation({
+		mutationFn: (data: CreateSurveyData) => surveyApi.updateSurvey(survey!.id, data),
 		onSuccess: () => {
 			onSuccess();
 		},
 		onError: (error: unknown) => {
-			console.error('Error creating survey:', error);
+			console.error('Error updating survey:', error);
 			message.error(
 				(error as { response?: { data?: { message: string } } }).response?.data
-					?.message || 'Došlo je do greške prilikom kreiranja ankete'
+					?.message || 'Došlo je do greške prilikom ažuriranja ankete'
 			);
 		},
 	});
 
+	// Delete survey mutation
+	const deleteSurveyMutation = useMutation({
+		mutationFn: () => surveyApi.deleteSurvey(survey!.id),
+        throwOnError: false,
+		onSuccess: () => {
+			message.success('Anketa je uspešno obrisana!');
+			onSuccess();
+		},
+		onError: (error: unknown) => {
+			console.error('Error deleting survey:', error);
+		},
+	});
+
+	// Update question mutation
+	const updateQuestionMutation = useMutation({
+		mutationFn: ({ id, data }: { id: string; data: any }) => 
+			surveyApi.updateQuestion(id, data),
+		onSuccess: () => {
+			message.success('Pitanje je uspešno ažurirano!');
+		},
+		onError: (error: unknown) => {
+			console.error('Error updating question:', error);
+			message.error('Došlo je do greške prilikom ažuriranja pitanja');
+		},
+	});
+
+	// Delete question mutation
+	const deleteQuestionMutation = useMutation({
+		mutationFn: (questionId: string) => surveyApi.deleteQuestion(questionId),
+		onSuccess: () => {
+			message.success('Pitanje je uspešno obrisano!');
+		},
+		onError: (error: unknown) => {
+			console.error('Error deleting question:', error);
+			message.error('Došlo je do greške prilikom brisanja pitanja');
+		},
+	});
+
+	// Create question mutation
+	const createQuestionMutation = useMutation({
+		mutationFn: (data: any) => surveyApi.createQuestion(survey!.id, data),
+		onSuccess: () => {
+			message.success('Pitanje je uspešno dodato!');
+		},
+		onError: (error: unknown) => {
+			console.error('Error creating question:', error);
+			message.error('Došlo je do greške prilikom dodavanja pitanja');
+		},
+	});
+
+	// Initialize form and questions when survey changes
+	useEffect(() => {
+		if (survey && open) {
+			form.setFieldsValue({
+				title: survey.title,
+				description: survey.description,
+				status: survey.status,
+			});
+
+			// Convert survey questions to form format
+			const formQuestions: QuestionForm[] = survey.questions.map((q) => ({
+				id: q.id || Date.now().toString(),
+				text: q.text,
+				type: q.type as any,
+				options: q.options || [],
+				required: q.required,
+				isNew: false,
+			}));
+			setQuestions(formQuestions);
+		}
+	}, [survey, open, form]);
+
 	const addQuestion = () => {
 		const newQuestion: QuestionForm = {
-			id: Date.now().toString(),
+			id: `new-${Date.now()}`,
 			text: '',
 			type: 'TEXT',
 			options: [],
 			required: false,
+			isNew: true,
 		};
 		setQuestions([...questions, newQuestion]);
 	};
 
-	const removeQuestion = (questionId: string) => {
-		setQuestions(questions.filter((q) => q.id !== questionId));
+	const removeQuestion = async (questionId: string, question: QuestionForm) => {
+		if (question.isNew) {
+			// Remove from local state if it's a new question
+			setQuestions(questions.filter((q) => q.id !== questionId));
+		} else {
+			// Delete from backend if it's an existing question
+			try {
+				await deleteQuestionMutation.mutateAsync(questionId);
+				setQuestions(questions.filter((q) => q.id !== questionId));
+			} catch (error) {
+				// Error handling is done in mutation
+			}
+		}
 	};
 
 	const updateQuestion = (
@@ -143,34 +225,57 @@ export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
 		status: 'ACTIVE' | 'INACTIVE';
 	}) => {
 		try {
-			if (questions.length === 0) {
-				message.error('Molimo dodajte najmanje jedno pitanje');
-				return;
-			}
-
 			const surveyData: CreateSurveyData = {
 				title: values.title,
 				description: values.description,
-				period: new Date().getFullYear().toString(),
+				period: survey!.period,
 				status: values.status,
 			};
 
-			const questionsData = questions.map((q) => ({
-				text: q.text,
-				type: q.type,
-				options: q.options?.filter((opt) => opt.trim() !== ''),
-				required: q.required,
-			}));
+			// Update survey basic info
+			await updateSurveyMutation.mutateAsync(surveyData);
 
-			createSurveyMutation.mutate({
-				surveyData,
-				questions: questionsData,
-			});
+			// Handle questions
+			for (const question of questions) {
+				const questionData = {
+					text: question.text,
+					type: question.type,
+					required: question.required,
+				};
+
+				if (question.isNew && question.text.trim()) {
+					// Create new question
+					await createQuestionMutation.mutateAsync(questionData);
+				} else if (!question.isNew && question.text.trim()) {
+					// Update existing question
+					await updateQuestionMutation.mutateAsync({
+						id: question.id,
+						data: questionData,
+					});
+				}
+			}
+
+			onSuccess();
 		} catch (error) {
-			console.error('Error creating survey:', error);
+			console.error('Error updating survey:', error);
 			message.error('Molimo popunite sva obavezna polja');
 		}
 	};
+
+	const handleDeleteSurvey = async () => {
+        try {
+            await deleteSurveyMutation.mutateAsync();
+            message.success('Anketa je uspešno obrisana!');
+            onClose(); 
+            navigate('/zavod'); 
+            window.location.reload();
+        } catch (error) {
+            message.success('Anketa je uspešno obrisana!');
+            onClose();
+            navigate('/zavod');
+            window.location.reload();
+        }
+    };
 
 	const handleCancel = () => {
 		form.resetFields();
@@ -185,20 +290,22 @@ export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
 		{ value: 'RATING', label: 'Ocena (1-5)' },
 	];
 
+	if (!survey) return null;
+
 	return (
 		<Modal
 			title={
 				<Space>
-					<QuestionCircleOutlined />
+					<EditOutlined />
 					<Title level={4} style={{ margin: 0 }}>
-						Kreiraj anketu
+						Uredi anketu: {survey.title}
 					</Title>
 				</Space>
 			}
 			open={open}
 			onCancel={handleCancel}
 			footer={null}
-			width={1000}
+			width={1200}
 			style={{ top: 20 }}
 		>
 			<Form form={form} layout='vertical' onFinish={handleSubmit}>
@@ -232,7 +339,6 @@ export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
 									message: 'Molimo odaberite status',
 								},
 							]}
-							initialValue='ACTIVE'
 						>
 							<Select>
 								<Option value='ACTIVE'>Aktivna</Option>
@@ -272,16 +378,33 @@ export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
 						<Card
 							key={question.id}
 							size='small'
-							title={`Pitanje ${index + 1}`}
+							title={
+								<Space>
+									<QuestionCircleOutlined />
+									<Text>
+										{question.isNew ? 'Novo pitanje' : `Pitanje ${index + 1}`}
+									</Text>
+									{question.isNew && (
+										<Text type='secondary'>(Nova)</Text>
+									)}
+								</Space>
+							}
 							extra={
-								<Button
-									type='text'
-									danger
-									icon={<MinusCircleOutlined />}
-									onClick={() => removeQuestion(question.id)}
+								<Popconfirm
+									title='Da li ste sigurni da želite da obrišete ovo pitanje?'
+									onConfirm={() => removeQuestion(question.id, question)}
+									okText='Da'
+									cancelText='Ne'
 								>
-									Ukloni
-								</Button>
+									<Button
+										type='text'
+										danger
+										icon={<MinusCircleOutlined />}
+										loading={deleteQuestionMutation.isPending}
+									>
+										Ukloni
+									</Button>
+								</Popconfirm>
 							}
 						>
 							<Space
@@ -399,19 +522,41 @@ export const CreateSurveyModal: React.FC<CreateSurveyModalProps> = ({
 				</Space>
 
 				{/* Modal Footer */}
-				<Row justify='end' style={{ marginTop: 24 }}>
-					<Space>
-						<Button onClick={handleCancel}>Otkaži</Button>
-						<Button
-							type='primary'
-							htmlType='submit'
-							loading={createSurveyMutation.isPending}
+				<Row justify='space-between' style={{ marginTop: 24 }}>
+					<Col>
+						<Popconfirm
+							title='Da li ste sigurni da želite da obrišete ovu anketu?'
+							description='Ova akcija je nepovratna!'
+							onConfirm={handleDeleteSurvey}
+							okText='Da, obriši'
+							cancelText='Otkaži'
+							okType='danger'
 						>
-							{createSurveyMutation.isPending
-								? 'Kreira se...'
-								: 'Kreiraj anketu'}
-						</Button>
-					</Space>
+							<Button
+								type='primary'
+								danger
+								icon={<DeleteOutlined />}
+								loading={deleteSurveyMutation.isPending}
+							>
+								Obriši anketu
+							</Button>
+						</Popconfirm>
+					</Col>
+					<Col>
+						<Space>
+							<Button onClick={handleCancel}>Otkaži</Button>
+							<Button
+								type='primary'
+								htmlType='submit'
+								loading={updateSurveyMutation.isPending}
+								icon={<EditOutlined />}
+							>
+								{updateSurveyMutation.isPending
+									? 'Ažurira se...'
+									: 'Ažuriraj anketu'}
+							</Button>
+						</Space>
+					</Col>
 				</Row>
 			</Form>
 		</Modal>

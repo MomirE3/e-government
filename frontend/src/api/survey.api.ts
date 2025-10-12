@@ -28,24 +28,24 @@ export interface Survey {
 	id: string;
 	title: string;
 	description: string;
+	period: string;
 	status: 'ACTIVE' | 'INACTIVE';
 	questions: Question[];
 	participants?: Participant[];
 	answers?: Answer[];
-	createdAt: string;
-	updatedAt: string;
 }
 
 export interface CreateSurveyData {
 	title: string;
 	description: string;
+	period: string;
 	status: 'ACTIVE' | 'INACTIVE';
-	questions: Omit<Question, 'id'>[];
 }
 
 export interface UpdateSurveyData {
 	title?: string;
 	description?: string;
+	period?: string;
 	status?: 'ACTIVE' | 'INACTIVE';
 	questions?: Omit<Question, 'id'>[];
 }
@@ -72,6 +72,12 @@ export const surveyApi = {
 	// Update survey
 	updateSurvey: async (id: string, data: UpdateSurveyData): Promise<Survey> => {
 		const response = await apiClient.put(`/zavod/surway/${id}`, data);
+		return response.data;
+	},
+
+	// Update survey status
+	updateSurveyStatus: async (id: string, status: 'ACTIVE' | 'INACTIVE'): Promise<Survey> => {
+		const response = await apiClient.patch(`/zavod/surway/${id}/status`, { status });
 		return response.data;
 	},
 
@@ -104,6 +110,35 @@ export const surveyApi = {
 			data
 		);
 		return response.data;
+	},
+
+	// Update question
+	updateQuestion: async (
+		questionId: string,
+		data: { text: string; type: string; required: boolean }
+	): Promise<Question> => {
+		const response = await apiClient.put(`/zavod/questions/${questionId}`, data);
+		return response.data;
+	},
+
+	// Delete question
+	deleteQuestion: async (questionId: string): Promise<void> => {
+		await apiClient.delete(`/zavod/questions/${questionId}`);
+	},
+
+	// Create multiple questions for survey
+	createQuestions: async (
+		surveyId: string,
+		questions: Omit<Question, 'id'>[]
+	): Promise<Question[]> => {
+		const promises = questions.map(question => 
+			surveyApi.createQuestion(surveyId, {
+				text: question.text,
+				type: question.type,
+				required: question.required
+			})
+		);
+		return Promise.all(promises);
 	},
 
 	// Create participant for survey

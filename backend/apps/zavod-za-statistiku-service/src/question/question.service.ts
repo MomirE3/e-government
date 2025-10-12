@@ -14,4 +14,12 @@ export class QuestionService {
   findAllBySurveyId(surveyId: number): Promise<Question[]> {
     return this.repo.findAllBySurveyId(surveyId);
   }
+
+  update(id: number, dto: CreateQuestionDto): Promise<Question> {
+    return this.repo.update(id, dto);
+  }
+
+  delete(id: number): Promise<void> {
+    return this.repo.delete(id);
+  }
 }

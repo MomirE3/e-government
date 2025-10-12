@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { SurwayService } from './surway.service';
 import type { CreateSurwayDto } from './dto/create-surway.dto';
+import type { UpdateSurwayDto } from './dto/update-surway.dto';
 import type { CreateQuestionDto } from '../question/dto/create-question.dto';
 import { QuestionService } from '../question/question.service';
 import { SampleService } from '../sample/sample.service';
@@ -31,6 +32,16 @@ export class SurwayController {
     return this.surwayService.create(dto);
   }
 
+  @MessagePattern('updateSurway')
+  update(data: { id: string; dto: UpdateSurwayDto }) {
+    return this.surwayService.update(+data.id, data.dto);
+  }
+
+  @MessagePattern('updateSurwayStatus')
+  updateStatus(data: { id: string; status: string }) {
+    return this.surwayService.updateStatus(+data.id, data.status);
+  }
+
   @MessagePattern('createQuestion')
   createQuestion(data: { id: string; dto: CreateQuestionDto }) {
     return this.questionService.create(+data.id, data.dto);
@@ -39,6 +50,16 @@ export class SurwayController {
   @MessagePattern('getQuestions')
   getQuestions(data: { id: string }) {
     return this.questionService.findAllBySurveyId(+data.id);
+  }
+
+  @MessagePattern('updateQuestion')
+  updateQuestion(data: { id: string; dto: CreateQuestionDto }) {
+    return this.questionService.update(+data.id, data.dto);
+  }
+
+  @MessagePattern('deleteQuestion')
+  deleteQuestion(data: { id: string }) {
+    return this.questionService.delete(+data.id);
   }
 
   @MessagePattern('createSample')
@@ -69,5 +90,10 @@ export class SurwayController {
   @MessagePattern('submitAnswers')
   submitAnswers(data: { id: string; token: string; dto: SubmitAnswersDto }) {
     return this.answerService.submitAnswers(data.token, data.dto);
+  }
+
+  @MessagePattern('removeSurway')
+  remove(data: { id: string }) {
+    return this.surwayService.remove(+data.id);
   }
 }

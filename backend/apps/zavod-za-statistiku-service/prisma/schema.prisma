@@ -28,7 +28,7 @@ model Question {
   required  Boolean
 
   surveyId  Int
-  survey    Survey    @relation(fields: [surveyId], references: [id])
+  survey    Survey    @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   answers   Answer[]
 }
 
@@ -38,7 +38,7 @@ model Sample {
   criteria   String
 
   surveyId   Int     @unique
-  survey     Survey  @relation(fields: [surveyId], references: [id])
+  survey     Survey  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
 }
 
 model Participant {
@@ -48,7 +48,7 @@ model Participant {
   status     String
 
   surveyId   Int
-  survey     Survey    @relation(fields: [surveyId], references: [id])
+  survey     Survey    @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   answers    Answer[]
 }
 
@@ -58,10 +58,10 @@ model Answer {
   createdAt   DateTime   @default(now())
 
   questionId  Int
-  question    Question   @relation(fields: [questionId], references: [id])
+  question    Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   participantId Int
-  participant   Participant @relation(fields: [participantId], references: [id])
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
 }
 
 model Report {
@@ -72,7 +72,7 @@ model Report {
   generatedAt  DateTime @default(now())
 
   surveyId     Int?
-  survey       Survey?   @relation(fields: [surveyId], references: [id])
+  survey       Survey?   @relation(fields: [surveyId], references: [id], onDelete: SetNull)
 
   duiIndicators  DUIIndicator[]
   docsIssued     DocsIssuedIndicator[]
