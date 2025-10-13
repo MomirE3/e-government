@@ -187,6 +187,18 @@ export const surveyApi = {
 		return response.data;
 	},
 
+	// Create survey report
+	createSurveyReport: async (data: { surveyId: number; title: string }): Promise<{ id: string; title: string; surveyId: number }> => {
+		const response = await apiClient.post('/zavod/reports/survey', data);
+		return response.data;
+	},
+
+	// Get survey statistics
+	getSurveyStatistics: async (surveyId: number): Promise<SurveyStatistics> => {
+		const response = await apiClient.get(`/zavod/surveys/${surveyId}/statistics`);
+		return response.data;
+	},
+
 	// Generate survey report
 	generateSurveyReport: async (
 		surveyId: number
@@ -203,4 +215,59 @@ export const surveyApi = {
 		const response = await apiClient.get(`/zavod/surway/${surveyId}/report`);
 		return response.data;
 	},
+
+	// Get all reports
+	getAllReports: async (): Promise<Report[]> => {
+		const response = await apiClient.get('/zavod/reports');
+		return response.data;
+	},
+
+	// Get report by ID
+	getReport: async (id: string): Promise<Report> => {
+		const response = await apiClient.get(`/zavod/reports/${id}`);
+		return response.data;
+	},
 };
+
+export interface Report {
+	id: string;
+	title: string;
+	type: string;
+	configJSON: string;
+	generatedAt: string;
+	surveyId?: number;
+	duiIndicators?: DUIIndicator[];
+	docsIssued?: DocsIssuedIndicator[];
+}
+
+export interface DUIIndicator {
+	id: number;
+	reportId: string;
+	year: number;
+	municipality: string;
+	type: string;
+	caseCount: number;
+}
+
+export interface DocsIssuedIndicator {
+	id: number;
+	reportId: string;
+	periodFrom: string;
+	periodTo: string;
+	documentType: string;
+	count: number;
+}
+
+export interface SurveyStatistics {
+	surveyId: number;
+	totalParticipants: number;
+	totalAnswers: number;
+	completionRate: number;
+	questionsCount: number;
+	responsesByQuestion: Array<{
+		questionId: number;
+		questionText: string;
+		responseCount: number;
+		mostCommonAnswer: string;
+	}>;
+}

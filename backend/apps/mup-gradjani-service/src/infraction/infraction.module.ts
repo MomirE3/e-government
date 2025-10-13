@@ -6,5 +6,6 @@ import { InfractionRepository } from './infraction.repository';
 @Module({
   controllers: [InfractionController],
   providers: [InfractionService, InfractionRepository],
+  exports: [InfractionService],
 })
 export class InfractionModule {}

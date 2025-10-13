@@ -11,6 +11,7 @@ import { RequestsModule } from './requests/requests.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { PaymentModule } from './payment/payment.module';
 import { DocumentModule } from './document/document.module';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DocumentModule } from './document/document.module';
     AppointmentModule,
     PaymentModule,
     DocumentModule,
+    ReportModule,
   ],
   controllers: [MupGradjaniServiceController],
   providers: [

@@ -182,4 +182,18 @@ export class ZavodController {
   getReport(@Param('id') id: string) {
     return this.zavodService.send('getReportById', { id: +id });
   }
+
+  @Get('reports')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  getAllReports() {
+    return this.zavodService.send('getAllReports', {});
+  }
+
+  @Get('surveys/:id/statistics')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  getSurveyStatistics(@Param('id') id: string) {
+    return this.zavodService.send('getSurveyStatistics', { surveyId: +id });
+  }
 }

@@ -23,6 +23,7 @@ import {
 	EyeOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
 	surveyApi,
 	type Survey,
@@ -40,6 +41,7 @@ import { ViewAnswersModal } from './ViewAnswersModal';
 const { Title, Text } = Typography;
 
 export const ZavodModule: React.FC = () => {
+	const navigate = useNavigate();
 	const [isCreateSurveyModalOpen, setIsCreateSurveyModalOpen] = useState(false);
 	const [isEditSurveyModalOpen, setIsEditSurveyModalOpen] = useState(false);
 	const [isAddQuestionsModalOpen, setIsAddQuestionsModalOpen] = useState(false);
@@ -375,6 +377,13 @@ export const ZavodModule: React.FC = () => {
 					}
 					extra={
 						<Space>
+							<Button
+								type='default'
+								icon={<BarChartOutlined />}
+								onClick={() => navigate('/zavod/reports')}
+							>
+								Izveštaji
+							</Button>
 							<Button
 								type='default'
 								icon={<FileTextOutlined />}

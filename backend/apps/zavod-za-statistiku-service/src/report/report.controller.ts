@@ -28,4 +28,14 @@ export class ReportController {
   getReportById(data: { id: number }) {
     return this.reportService.getReport(+data.id);
   }
+
+  @MessagePattern('getAllReports')
+  getAllReports() {
+    return this.reportService.getAllReports();
+  }
+
+  @MessagePattern('getSurveyStatistics')
+  getSurveyStatistics(data: { surveyId: number }) {
+    return this.reportService.getSurveyStatistics(data.surveyId);
+  }
 }

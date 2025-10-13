@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -10,33 +9,29 @@ export class ReportRepository {
     title: string,
     type: string,
     config: unknown,
-    surveyId?: number,
   ) {
     return this.prisma.report.create({
       data: {
         title,
         type,
         configJSON: JSON.stringify(config),
-        surveyId: surveyId ?? (undefined as any),
       },
     });
   }
 
-  async addDuiIndicators(reportId: number, rows: any[]) {
+  async addDuiIndicators(reportId: string, rows: any[]) {
     await this.prisma.dUIIndicator.createMany({
       data: rows.map((r) => ({
         reportId,
         year: r.year,
         municipality: r.municipality,
-        type: r.type, // ✅ koristi tip prekršaja
+        type: r.type,
         caseCount: r.caseCount,
       })),
     });
   }
 
-  async addDocsIssuedIndicators(reportId: number, rows: any[]) {
-    console.log('📝 rows za insert:', rows);
-
+  async addDocsIssuedIndicators(reportId: string, rows: any[]) {
     if (!Array.isArray(rows) || rows.length === 0) {
       return;
     }
@@ -52,7 +47,7 @@ export class ReportRepository {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return this.prisma.report.findUnique({
       where: { id },
       include: {

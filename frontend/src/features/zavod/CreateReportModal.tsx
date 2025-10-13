@@ -14,8 +14,8 @@ import {
 	Select,
 	DatePicker,
 } from 'antd';
-import { useMutation } from '@tanstack/react-query';
-import { surveyApi } from '../../api/survey.api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { surveyApi, type Survey } from '../../api/survey.api';
 import dayjs from 'dayjs';
 
 const { Text } = Typography;
@@ -37,7 +37,12 @@ interface DocsReportForm {
 	title: string;
 }
 
-type ReportType = 'dui' | 'docs';
+interface SurveyReportForm {
+	surveyId: number;
+	title: string;
+}
+
+type ReportType = 'dui' | 'docs' | 'survey';
 
 export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 	open,
@@ -46,6 +51,13 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 }) => {
 	const [form] = Form.useForm();
 	const [reportType, setReportType] = useState<ReportType>('dui');
+
+	// Fetch surveys for survey report
+	const { data: surveys = [] } = useQuery<Survey[]>({
+		queryKey: ['surveys'],
+		queryFn: surveyApi.getAllSurveys,
+		enabled: open,
+	});
 
 	// Create DUI report mutation
 	const createDUIReportMutation = useMutation({
@@ -89,11 +101,32 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 		},
 	});
 
+	// Create survey report mutation
+	const createSurveyReportMutation = useMutation({
+		mutationFn: async (data: SurveyReportForm) => {
+			const result = await surveyApi.createSurveyReport(data);
+			return result;
+		},
+		onSuccess: () => {
+			message.success('Izveštaj o anketi je uspešno kreiran');
+			onSuccess();
+			onClose();
+			form.resetFields();
+		},
+		onError: (error: unknown) => {
+			console.error('Error creating survey report:', error);
+			message.error(
+				(error as { response?: { data?: { message: string } } }).response?.data
+					?.message || 'Došlo je do greške prilikom kreiranja izveštaja o anketi'
+			);
+		},
+	});
+
 	const handleSubmit = async (values: any) => {
 		try {
 			if (reportType === 'dui') {
 				createDUIReportMutation.mutate(values);
-			} else {
+			} else if (reportType === 'docs') {
 				// Handle date range for docs report
 				const { period, title } = values;
 				const docsData = {
@@ -102,6 +135,14 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 					title,
 				};
 				createDocsReportMutation.mutate(docsData);
+			} else if (reportType === 'survey') {
+				// Handle survey report
+				const { surveyId, title } = values;
+				const surveyData = {
+					surveyId,
+					title,
+				};
+				createSurveyReportMutation.mutate(surveyData);
 			}
 		} catch (error) {
 			console.error('Error creating report:', error);
@@ -146,6 +187,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 						options={[
 							{ value: 'dui', label: 'DUI izveštaj (alkoholizovana vožnja)' },
 							{ value: 'docs', label: 'Izveštaj o dokumentima' },
+							{ value: 'survey', label: 'Izveštaj o anketi' },
 						]}
 					/>
 				</Form.Item>
@@ -184,7 +226,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 								max={new Date().getFullYear() + 1}
 							/>
 						</Form.Item>
-					) : (
+					) : reportType === 'docs' ? (
 						// Docs Report Form
 						<>
 							<Form.Item
@@ -209,6 +251,41 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 									style={{ width: '100%' }}
 									placeholder={['Datum od', 'Datum do']}
 									format='YYYY-MM-DD'
+								/>
+							</Form.Item>
+						</>
+					) : (
+						// Survey Report Form
+						<>
+							<Form.Item
+								name='title'
+								label='Naziv izveštaja'
+								rules={[
+									{ required: true, message: 'Molimo unesite naziv izveštaja' },
+									{ min: 3, message: 'Naziv mora imati najmanje 3 karaktera' },
+								]}
+							>
+								<Input placeholder='Unesite naziv izveštaja' />
+							</Form.Item>
+
+							<Form.Item
+								name='surveyId'
+								label='Anketa'
+								rules={[
+									{ required: true, message: 'Molimo odaberite anketu' },
+								]}
+							>
+								<Select
+									placeholder='Odaberite anketu'
+									showSearch
+									optionFilterProp='children'
+									filterOption={(input, option) =>
+										(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+									}
+									options={surveys.map((survey) => ({
+										value: survey.id,
+										label: `${survey.title} (${survey.participants?.length || 0} učesnika)`,
+									}))}
 								/>
 							</Form.Item>
 						</>

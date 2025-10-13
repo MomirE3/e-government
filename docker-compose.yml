@@ -71,6 +71,7 @@ services:
       - GMAIL_PASS=${GMAIL_PASS}
     depends_on:
       - postgres-zavod
+      - mup-service
     restart: on-failure
     volumes:
       - ./backend/apps/zavod-za-statistiku-service/src:/app/apps/zavod-za-statistiku-service/src

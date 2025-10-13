@@ -149,3 +149,45 @@ model Document {
 
   @@map("documents")
 }
+
+model Report {
+  id           String   @id @default(cuid())
+  title        String
+  type         String
+  configJSON   String
+  generatedAt  DateTime @default(now())
+
+  // Relationships
+  duiIndicators  DUIIndicator[]
+  docsIssued     DocsIssuedIndicator[]
+
+  @@map("reports")
+}
+
+model DUIIndicator {
+  id           Int      @id @default(autoincrement())
+  reportId     String
+  year         Int
+  municipality String
+  type         String
+  caseCount    Int
+
+  // Foreign key
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("dui_indicators")
+}
+
+model DocsIssuedIndicator {
+  id           Int      @id @default(autoincrement())
+  reportId     String
+  periodFrom   DateTime
+  periodTo     DateTime
+  documentType String
+  count        Int
+
+  // Foreign key
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("docs_issued_indicators")
+}

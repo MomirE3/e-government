@@ -1,10 +1,10 @@
-import { IsInt, IsObject, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateSurveyReportDto {
-  @IsInt()
+  @IsNumber()
   surveyId: number;
 
+  @IsString()
   @IsOptional()
-  @IsObject()
-  config?: Record<string, any>;
+  title?: string;
 }
