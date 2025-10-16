@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	Card,
 	Form,
@@ -17,7 +17,16 @@ import {
 	Table,
 	Tag,
 	Tooltip,
+	Upload,
+	Spin,
 } from 'antd';
+import {
+	UploadOutlined,
+	FileOutlined,
+	EyeOutlined,
+	DownloadOutlined,
+} from '@ant-design/icons';
+import type { UploadFile } from 'antd';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../auth';
 import { requestApi, type CreateRequestData } from '../../api/request.api';
@@ -29,6 +38,9 @@ const { Option } = Select;
 export const Request: React.FC = () => {
 	const { user } = useAuth();
 	const [form] = Form.useForm();
+	const [fileList, setFileList] = useState<UploadFile[]>([]);
+	const [uploading, setUploading] = useState(false);
+	const [loadingDocument, setLoadingDocument] = useState<string | null>(null);
 
 	// React Query mutation for creating request
 	const createRequestMutation = useMutation({
@@ -207,15 +219,105 @@ export const Request: React.FC = () => {
 		{
 			title: 'Dokument',
 			key: 'document',
-			width: 150,
+			width: 200,
 			render: (record: CreateRequestData & { id: string }) => {
 				if (!record.document) return '-';
+
+				const handleDownload = async () => {
+					const loadingKey = `download-${record.id}`;
+					try {
+						if (!record.document?.fileUrl) {
+							message.error('Dokument nije dostupan');
+							return;
+						}
+						setLoadingDocument(loadingKey);
+						const blob = await requestApi.getDocumentStream(
+							record.document.fileUrl
+						);
+						const url = URL.createObjectURL(blob);
+						const link = document.createElement('a');
+						link.href = url;
+						link.download = record.document.fileName || record.document.name;
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+						URL.revokeObjectURL(url);
+						message.success('Dokument se preuzima...');
+					} catch (error) {
+						console.error('Error downloading document:', error);
+						message.error('Greška prilikom preuzimanja dokumenta');
+					} finally {
+						setLoadingDocument(null);
+					}
+				};
+
+				const handlePreview = async () => {
+					const loadingKey = `view-${record.id}`;
+					try {
+						if (!record.document?.fileUrl) {
+							message.error('Dokument nije dostupan');
+							return;
+						}
+						setLoadingDocument(loadingKey);
+						const blob = await requestApi.getDocumentStream(
+							record.document.fileUrl
+						);
+						const url = URL.createObjectURL(blob);
+						window.open(url, '_blank');
+						// Clean up the URL after a delay
+						setTimeout(() => URL.revokeObjectURL(url), 100);
+					} catch (error) {
+						console.error('Error previewing document:', error);
+						message.error('Greška prilikom pregleda dokumenta');
+					} finally {
+						setLoadingDocument(null);
+					}
+				};
+
 				return (
-					<Tooltip title={record.document.name}>
-						<Text ellipsis style={{ maxWidth: 120 }}>
-							{record.document.name}
-						</Text>
-					</Tooltip>
+					<Space direction='vertical' size='small'>
+						<Tooltip title={record.document.name}>
+							<Text ellipsis style={{ maxWidth: 150 }}>
+								<FileOutlined /> {record.document.name}
+							</Text>
+						</Tooltip>
+						<Space size='small'>
+							<Button
+								type='link'
+								size='small'
+								icon={
+									loadingDocument === `view-${record.id}` ? (
+										<Spin size='small' />
+									) : (
+										<EyeOutlined />
+									)
+								}
+								onClick={handlePreview}
+								disabled={loadingDocument === `view-${record.id}`}
+							>
+								{loadingDocument === `view-${record.id}`
+									? 'Učitavanje...'
+									: 'Pregledaj'}
+							</Button>
+							<Button
+								type='link'
+								size='small'
+								icon={
+									loadingDocument === `download-${record.id}` ? (
+										<Spin size='small' />
+									) : (
+										<DownloadOutlined />
+									)
+								}
+								onClick={handleDownload}
+								disabled={loadingDocument === `download-${record.id}`}
+							>
+								{loadingDocument === `download-${record.id}`
+									? 'Preuzimanje...'
+									: 'Preuzmi'}
+							</Button>
+						</Space>
+					</Space>
 				);
 			},
 		},
@@ -228,11 +330,25 @@ export const Request: React.FC = () => {
 		location: string;
 		amount: number;
 		referenceNumber: string;
-		documentName: string;
 		documentType: string;
 		issuedDate: dayjs.Dayjs;
+		documentFile: UploadFile[];
 	}) => {
 		try {
+			setUploading(true);
+
+			// Upload file first
+			if (!fileList[0]) {
+				message.error('Molimo priložite dokument');
+				setUploading(false);
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append('file', fileList[0] as unknown as Blob);
+
+			const uploadResponse = await requestApi.uploadDocument(formData);
+
 			// Generate random case number
 			const caseNumber = `CASE-${Date.now()}-${Math.random()
 				.toString(36)
@@ -262,17 +378,24 @@ export const Request: React.FC = () => {
 					referenceNumber: values.referenceNumber,
 				},
 				document: {
-					name: values.documentName,
+					name: fileList[0].name,
 					type: values.documentType,
 					issuedDate: dayjs(values.issuedDate).toISOString(),
+					fileUrl: uploadResponse.fileUrl,
+					fileName: uploadResponse.fileName,
+					fileSize: uploadResponse.fileSize,
+					mimeType: fileList[0].type || '',
 				},
 			};
 
 			// Send request using React Query mutation
 			createRequestMutation.mutate(requestData);
+			setFileList([]);
+			setUploading(false);
 		} catch (error) {
 			console.error('Error creating request:', error);
-			message.error('Molimo popunite sva obavezna polja');
+			message.error('Došlo je do greške prilikom kreiranja zahteva');
+			setUploading(false);
 		}
 	};
 
@@ -439,28 +562,8 @@ export const Request: React.FC = () => {
 
 						<Divider />
 
-						{/* Document */}
+						{/* Document Upload */}
 						<Title level={4}>Dokument</Title>
-						<Row gutter={16}>
-							<Col span={24}>
-								<Form.Item
-									name='documentName'
-									label='Naziv dokumenta'
-									rules={[
-										{
-											required: true,
-											message: 'Molimo unesite naziv dokumenta',
-										},
-										{
-											min: 3,
-											message: 'Naziv mora imati najmanje 3 karaktera',
-										},
-									]}
-								>
-									<Input placeholder='Unesite naziv dokumenta' />
-								</Form.Item>
-							</Col>
-						</Row>
 						<Row gutter={16}>
 							<Col span={12}>
 								<Form.Item
@@ -504,6 +607,69 @@ export const Request: React.FC = () => {
 								</Form.Item>
 							</Col>
 						</Row>
+						<Row gutter={16}>
+							<Col span={24}>
+								<Form.Item
+									name='documentFile'
+									label='Priložite dokument'
+									rules={[
+										{
+											required: true,
+											message: 'Molimo priložite dokument',
+										},
+									]}
+									valuePropName='fileList'
+									getValueFromEvent={(e) => {
+										if (Array.isArray(e)) {
+											return e;
+										}
+										return e?.fileList;
+									}}
+								>
+									<Upload
+										fileList={fileList}
+										beforeUpload={(file) => {
+											// Validate file type
+											const allowedTypes = [
+												'application/pdf',
+												'image/jpeg',
+												'image/jpg',
+												'image/png',
+												'application/msword',
+												'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+											];
+											if (!allowedTypes.includes(file.type)) {
+												message.error(
+													'Možete priložiti samo PDF, Word ili slike (JPG, PNG)!'
+												);
+												return Upload.LIST_IGNORE;
+											}
+											// Validate file size (max 10MB)
+											if (file.size / 1024 / 1024 > 10) {
+												message.error('Fajl mora biti manji od 10MB!');
+												return Upload.LIST_IGNORE;
+											}
+											setFileList([file]);
+											return false; // Prevent auto upload
+										}}
+										onRemove={() => {
+											setFileList([]);
+										}}
+										maxCount={1}
+									>
+										<Button
+											icon={<UploadOutlined />}
+											disabled={fileList.length >= 1}
+										>
+											Kliknite da priložite dokument
+										</Button>
+									</Upload>
+								</Form.Item>
+								<Text type='secondary' style={{ fontSize: '12px' }}>
+									Dozvoljeni formati: PDF, Word, JPG, PNG (Maksimalno 10MB)
+								</Text>
+							</Col>
+						</Row>
 
 						{/* Submit Button */}
 						<Row justify='end' style={{ marginTop: '24px' }}>
@@ -511,7 +677,7 @@ export const Request: React.FC = () => {
 								type='primary'
 								htmlType='button'
 								size='large'
-								loading={createRequestMutation.isPending}
+								loading={createRequestMutation.isPending || uploading}
 								onClick={() => {
 									form
 										.validateFields()
@@ -523,7 +689,9 @@ export const Request: React.FC = () => {
 										});
 								}}
 							>
-								{createRequestMutation.isPending
+								{uploading
+									? 'Prilaže se dokument...'
+									: createRequestMutation.isPending
 									? 'Šalje se...'
 									: 'Pošalji zahtev'}
 							</Button>

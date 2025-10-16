@@ -44,8 +44,16 @@ services:
     environment:
       - PORT=3000
       - DATABASE_URL=postgresql://admin:admin@postgres-mup:5432/mup_gradjani
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_USE_SSL=false
+      - MINIO_BUCKET_NAME=e-government-documents
+      - MINIO_PUBLIC_URL=http://localhost:9000
     depends_on:
       - postgres-mup
+      - minio
     restart: on-failure
     volumes:
       - ./backend/apps/mup-gradjani-service/src:/app/apps/mup-gradjani-service/src
@@ -109,6 +117,26 @@ services:
     volumes:
       - postgres_zavod_data:/var/lib/postgresql/data
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: always
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
 volumes:
   postgres_mup_data:
   postgres_zavod_data:
+  minio_data:

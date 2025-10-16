@@ -12,6 +12,7 @@ import { AppointmentModule } from './appointment/appointment.module';
 import { PaymentModule } from './payment/payment.module';
 import { DocumentModule } from './document/document.module';
 import { ReportModule } from './report/report.module';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ReportModule } from './report/report.module';
     PaymentModule,
     DocumentModule,
     ReportModule,
+    MinioModule,
   ],
   controllers: [MupGradjaniServiceController],
   providers: [

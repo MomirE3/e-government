@@ -18,6 +18,10 @@ export interface CreateRequestData {
 		name: string;
 		type: string;
 		issuedDate: string;
+		fileUrl?: string;
+		fileName?: string;
+		fileSize?: number;
+		mimeType?: string;
 	};
 }
 
@@ -43,6 +47,10 @@ export interface Request {
 		name: string;
 		type: string;
 		issuedDate: string;
+		fileUrl?: string;
+		fileName?: string;
+		fileSize?: number;
+		mimeType?: string;
 	};
 }
 
@@ -100,6 +108,35 @@ export const requestApi = {
 
 		const response = await apiClient.get(
 			`/mup/request/filter?${queryParams.toString()}`
+		);
+		return response.data;
+	},
+
+	// Upload document
+	uploadDocument: async (formData: FormData) => {
+		const response = await apiClient.post('/mup/documents/upload', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		});
+		return response.data;
+	},
+
+	// Get document URL
+	getDocumentStream: async (fileUrl: string): Promise<Blob> => {
+		const response = await apiClient.get(
+			`/mup/documents/stream/${encodeURIComponent(fileUrl)}`,
+			{
+				responseType: 'blob',
+			}
+		);
+		return response.data;
+	},
+
+	// Delete document
+	deleteDocumentFile: async (fileUrl: string) => {
+		const response = await apiClient.delete(
+			`/mup/documents/file/${encodeURIComponent(fileUrl)}`
 		);
 		return response.data;
 	},

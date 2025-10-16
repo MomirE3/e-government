@@ -142,6 +142,10 @@ model Document {
   name       String
   type       String
   issuedDate DateTime
+  fileUrl    String?  // MinIO file path
+  fileName   String?  // Original file name
+  fileSize   Int?     // File size in bytes
+  mimeType   String?  // File MIME type
 
   // Foreign key
   requestId String  @unique

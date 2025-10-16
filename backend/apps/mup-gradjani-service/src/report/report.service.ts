@@ -22,11 +22,15 @@ export class ReportService {
     const duiData = await this.infractionService.getDuiStatistics(dto.year);
 
     // upis u DUIIndicator tabelu
-    await this.repo.addDuiIndicators(report.id, duiData);
-    return this.repo.findById(report.id);
+    await this.repo.addDuiIndicators(report.id.toString(), duiData);
+    return this.repo.findById(report.id.toString());
   }
 
-  async generateDocs(dto: { periodFrom: string; periodTo: string; title?: string }) {
+  async generateDocs(dto: {
+    periodFrom: string;
+    periodTo: string;
+    title?: string;
+  }) {
     const report = await this.repo.createReport(
       dto.title ?? `Docs report ${dto.periodFrom}-${dto.periodTo}`,
       'DOCS_ISSUED',
@@ -44,8 +48,8 @@ export class ReportService {
       throw new Error('getDocsIssued nije vratio niz!');
     }
 
-    await this.repo.addDocsIssuedIndicators(report.id, docsData);
-    return this.repo.findById(report.id);
+    await this.repo.addDocsIssuedIndicators(report.id.toString(), docsData);
+    return this.repo.findById(report.id.toString());
   }
 
   getReport(id: string) {
@@ -65,17 +69,17 @@ export class ReportService {
 
     // TODO: Dodati anketa statistike kada budu implementirane
     console.log('📊 Survey report created in MUP:', report.id);
-    
+
     return report;
   }
 
-  async getSurveyStatistics(dto: { surveyId: number }) {
+  getSurveyStatistics(dto: { surveyId: number }) {
     // TODO: Implementirati kada budu anketa podaci u MUP bazi
-    return {
+    return Promise.resolve({
       surveyId: dto.surveyId,
       totalParticipants: 0,
       totalAnswers: 0,
       completionRate: 0,
-    };
+    });
   }
 }

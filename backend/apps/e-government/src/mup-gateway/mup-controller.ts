@@ -10,8 +10,15 @@ import {
   Query,
   UseGuards,
   ForbiddenException,
+  UploadedFile,
+  UseInterceptors,
+  StreamableFile,
+  Res,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy } from '@nestjs/microservices';
+import type { Response } from 'express';
+import { lastValueFrom } from 'rxjs';
 import { CreateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/create-citizen.dto';
 import { UpdateCitizenDto } from 'apps/mup-gradjani-service/src/citizen/dto/update-citizen.dto';
 import type { CreateInfractionDto } from 'apps/mup-gradjani-service/src/infraction/dto/create-infraction.dto';
@@ -333,5 +340,51 @@ export class MupController {
   @Roles(Role.ADMIN)
   removeDocument(@Param('id') id: string) {
     return this.mupService.send('removeDocument', id);
+  }
+
+  // Document Upload
+  @Post('documents/upload')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadDocument(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new ForbiddenException('No file uploaded');
+    }
+
+    return this.mupService.send('uploadDocument', {
+      file: file.buffer,
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+    });
+  }
+
+  @Get('documents/stream/:fileUrl')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  async streamDocument(
+    @Param('fileUrl') fileUrl: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const result = await lastValueFrom(
+        this.mupService.send('getDocumentFile', fileUrl),
+      );
+
+      // Set appropriate headers
+      res.set({
+        'Content-Type': result.mimeType || 'application/octet-stream',
+        'Content-Disposition': `inline; filename="${result.fileName}"`,
+        'Content-Length': result.buffer.length,
+      });
+
+      return new StreamableFile(Buffer.from(result.buffer));
+    } catch {
+      throw new ForbiddenException('Unable to retrieve document');
+    }
+  }
+
+  @Delete('documents/file/:fileUrl')
+  @Roles(Role.ADMIN, Role.CITIZEN)
+  deleteDocumentFile(@Param('fileUrl') fileUrl: string) {
+    return this.mupService.send('deleteDocument', fileUrl);
   }
 }

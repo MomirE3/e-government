@@ -10,11 +10,20 @@ import {
 	Select,
 	Row,
 	Col,
+	Tooltip,
+	message,
+	Spin,
 } from 'antd';
 import {
 	FileSearchOutlined,
 	ArrowLeftOutlined,
 	FilterOutlined,
+	FileOutlined,
+	EyeOutlined,
+	DownloadOutlined,
+	FilePdfOutlined,
+	FileWordOutlined,
+	FileImageOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -33,6 +42,7 @@ export const RequestsPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [form] = Form.useForm();
 	const [filters, setFilters] = useState<FilterRequestParams>({});
+	const [loadingDocument, setLoadingDocument] = useState<string | null>(null);
 
 	// Fetch all citizens for filter dropdown
 	const { data: allCitizens = [] } = useQuery({
@@ -187,19 +197,156 @@ export const RequestsPage: React.FC = () => {
 		{
 			title: 'Dokument',
 			key: 'document',
-			width: 150,
+			width: 250,
 			render: (record: Request) => {
-				if (record.document) {
-					return (
-						<div>
-							<div>{record.document.name}</div>
-							<Text type='secondary' style={{ fontSize: '12px' }}>
-								{record.document.type}
-							</Text>
-						</div>
-					);
+				if (!record.document) {
+					return <Text type='secondary'>Nije izdat</Text>;
 				}
-				return <Text type='secondary'>Nije izdat</Text>;
+
+				const isImage = (mime?: string) => mime?.startsWith('image/') || false;
+				const isPdf = (mime?: string) => mime === 'application/pdf';
+				const isWord = (mime?: string) =>
+					mime?.includes('word') || mime?.includes('document');
+
+				const getFileIcon = () => {
+					if (isImage(record.document?.mimeType)) {
+						return (
+							<FileImageOutlined style={{ fontSize: 20, color: '#52c41a' }} />
+						);
+					}
+					if (isPdf(record.document?.mimeType)) {
+						return (
+							<FilePdfOutlined style={{ fontSize: 20, color: '#ff4d4f' }} />
+						);
+					}
+					if (isWord(record.document?.mimeType)) {
+						return (
+							<FileWordOutlined style={{ fontSize: 20, color: '#1890ff' }} />
+						);
+					}
+					return <FileOutlined style={{ fontSize: 20, color: '#8c8c8c' }} />;
+				};
+
+				const handleView = async () => {
+					if (!record.document?.fileUrl) {
+						message.error('Dokument nije dostupan');
+						return;
+					}
+					const loadingKey = `view-${record.id}`;
+					try {
+						setLoadingDocument(loadingKey);
+						const blob = await requestApi.getDocumentStream(
+							record.document.fileUrl
+						);
+						const url = URL.createObjectURL(blob);
+						window.open(url, '_blank');
+						// Clean up the URL after a delay
+						setTimeout(() => URL.revokeObjectURL(url), 100);
+					} catch (error) {
+						message.error('Greška pri otvaranju dokumenta');
+						console.error(error);
+					} finally {
+						setLoadingDocument(null);
+					}
+				};
+
+				const handleDownload = async () => {
+					if (!record.document?.fileUrl) {
+						message.error('Dokument nije dostupan');
+						return;
+					}
+					const loadingKey = `download-${record.id}`;
+					try {
+						setLoadingDocument(loadingKey);
+						const blob = await requestApi.getDocumentStream(
+							record.document.fileUrl
+						);
+						const url = URL.createObjectURL(blob);
+						const link = document.createElement('a');
+						link.href = url;
+						link.download = record.document.fileName || record.document.name;
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+						URL.revokeObjectURL(url);
+						message.success('Preuzimanje započeto');
+					} catch (error) {
+						message.error('Greška pri preuzimanju dokumenta');
+						console.error(error);
+					} finally {
+						setLoadingDocument(null);
+					}
+				};
+
+				return (
+					<Space direction='vertical' size='small' style={{ width: '100%' }}>
+						<Space align='center'>
+							{getFileIcon()}
+							<div style={{ flex: 1, minWidth: 0 }}>
+								<Tooltip
+									title={record.document.fileName || record.document.name}
+								>
+									<div
+										style={{
+											maxWidth: 150,
+											whiteSpace: 'nowrap',
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											fontWeight: 500,
+										}}
+									>
+										{record.document.fileName || record.document.name}
+									</div>
+								</Tooltip>
+								<Text type='secondary' style={{ fontSize: '11px' }}>
+									{record.document.type}
+									{record.document.fileSize &&
+										` • ${(record.document.fileSize / 1024).toFixed(1)} KB`}
+								</Text>
+							</div>
+						</Space>
+						{record.document.fileUrl && (
+							<Space size='small'>
+								<Button
+									type='link'
+									size='small'
+									icon={
+										loadingDocument === `view-${record.id}` ? (
+											<Spin size='small' />
+										) : (
+											<EyeOutlined />
+										)
+									}
+									onClick={handleView}
+									disabled={loadingDocument === `view-${record.id}`}
+									style={{ padding: '0 4px', height: 'auto' }}
+								>
+									{loadingDocument === `view-${record.id}`
+										? 'Učitavanje...'
+										: 'Pregledaj'}
+								</Button>
+								<Button
+									type='link'
+									size='small'
+									icon={
+										loadingDocument === `download-${record.id}` ? (
+											<Spin size='small' />
+										) : (
+											<DownloadOutlined />
+										)
+									}
+									onClick={handleDownload}
+									disabled={loadingDocument === `download-${record.id}`}
+									style={{ padding: '0 4px', height: 'auto' }}
+								>
+									{loadingDocument === `download-${record.id}`
+										? 'Preuzimanje...'
+										: 'Preuzmi'}
+								</Button>
+							</Space>
+						)}
+					</Space>
+				);
 			},
 		},
 	];
