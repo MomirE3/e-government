@@ -27,7 +27,14 @@ export class InfractionService {
     return this.infractionRepository.remove(id);
   }
 
-  async getDuiStatistics(year: number) {
+  async getDuiStatistics(year: number): Promise<
+    Array<{
+      year: number;
+      municipality: string;
+      type: string;
+      caseCount: number;
+    }>
+  > {
     const infractions = await this.infractionRepository.findByYearAndType(
       year,
       'DRUNK_DRIVING',
@@ -47,7 +54,15 @@ export class InfractionService {
         acc[key].caseCount++;
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<
+        string,
+        {
+          year: number;
+          municipality: string;
+          type: string;
+          caseCount: number;
+        }
+      >,
     );
 
     return Object.values(grouped);

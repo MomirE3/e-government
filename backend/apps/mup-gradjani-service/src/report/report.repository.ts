@@ -5,11 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ReportRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createReport(
-    title: string,
-    type: string,
-    config: unknown,
-  ) {
+  async createReport(title: string, type: string, config: unknown) {
     return this.prisma.report.create({
       data: {
         title,
@@ -19,10 +15,18 @@ export class ReportRepository {
     });
   }
 
-  async addDuiIndicators(reportId: string, rows: any[]) {
+  async addDuiIndicators(
+    reportId: string,
+    rows: Array<{
+      year: number;
+      municipality: string;
+      type: string;
+      caseCount: number;
+    }>,
+  ) {
     await this.prisma.dUIIndicator.createMany({
       data: rows.map((r) => ({
-        reportId,
+        reportId: parseInt(reportId, 10),
         year: r.year,
         municipality: r.municipality,
         type: r.type,
@@ -31,14 +35,22 @@ export class ReportRepository {
     });
   }
 
-  async addDocsIssuedIndicators(reportId: string, rows: any[]) {
+  async addDocsIssuedIndicators(
+    reportId: string,
+    rows: Array<{
+      periodFrom: string;
+      periodTo: string;
+      documentType: string;
+      count: number;
+    }>,
+  ) {
     if (!Array.isArray(rows) || rows.length === 0) {
       return;
     }
 
     await this.prisma.docsIssuedIndicator.createMany({
       data: rows.map((r) => ({
-        reportId,
+        reportId: parseInt(reportId, 10),
         periodFrom: new Date(r.periodFrom),
         periodTo: new Date(r.periodTo),
         documentType: r.documentType,
@@ -49,7 +61,7 @@ export class ReportRepository {
 
   async findById(id: string) {
     return this.prisma.report.findUnique({
-      where: { id },
+      where: { id: parseInt(id, 10) },
       include: {
         duiIndicators: true,
         docsIssued: true,
