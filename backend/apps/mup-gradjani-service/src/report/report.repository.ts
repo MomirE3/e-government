@@ -26,7 +26,7 @@ export class ReportRepository {
   ) {
     await this.prisma.dUIIndicator.createMany({
       data: rows.map((r) => ({
-        reportId: parseInt(reportId, 10),
+        reportId: reportId,
         year: r.year,
         municipality: r.municipality,
         type: r.type,
@@ -50,7 +50,7 @@ export class ReportRepository {
 
     await this.prisma.docsIssuedIndicator.createMany({
       data: rows.map((r) => ({
-        reportId: parseInt(reportId, 10),
+        reportId: reportId,
         periodFrom: new Date(r.periodFrom),
         periodTo: new Date(r.periodTo),
         documentType: r.documentType,
@@ -61,7 +61,7 @@ export class ReportRepository {
 
   async findById(id: string) {
     return this.prisma.report.findUnique({
-      where: { id: parseInt(id, 10) },
+      where: { id: id },
       include: {
         duiIndicators: true,
         docsIssued: true,

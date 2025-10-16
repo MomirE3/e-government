@@ -31,4 +31,11 @@ export class DocumentController {
   async deleteDocument(@Payload() fileUrl: string) {
     return this.documentService.deleteDocument(fileUrl);
   }
+
+  @MessagePattern('getDocsIssued')
+  async getDocsIssued(
+    @Payload() data: { periodFrom: string; periodTo: string },
+  ) {
+    return this.documentService.getDocsIssued(data);
+  }
 }
