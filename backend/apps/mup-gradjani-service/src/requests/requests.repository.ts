@@ -114,6 +114,25 @@ export class RequestsRepository {
     return this.toEntity(request);
   }
 
+  async updateStatus(
+    id: string,
+    status: RequestStatus,
+    adminMessage?: string,
+    processedBy?: string,
+  ) {
+    const request = await this.prisma.request.update({
+      where: { id },
+      data: {
+        status,
+        adminMessage,
+        processedBy,
+        processedAt: new Date(),
+      },
+      include: { appointment: true, payment: true, document: true },
+    });
+    return this.toEntity(request);
+  }
+
   private toEntity(request: PrismaRequestWithRelations): Request {
     return {
       id: request.id,
@@ -122,6 +141,9 @@ export class RequestsRepository {
       status: request.status as RequestStatus,
       submissionDate: request.submissionDate.toISOString(),
       citizenId: request.citizenId,
+      adminMessage: request.adminMessage || undefined,
+      processedAt: request.processedAt?.toISOString() || undefined,
+      processedBy: request.processedBy || undefined,
       appointment: request.appointment as unknown as Appointment,
       payment: request.payment as unknown as Payment,
       document: request.document as unknown as Document,

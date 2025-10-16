@@ -6,6 +6,9 @@ export interface CreateRequestData {
 	status: string;
 	submissionDate: string;
 	citizenId: string;
+	adminMessage?: string;
+	processedAt?: string;
+	processedBy?: string;
 	appointment?: {
 		dateTime: string;
 		location: string;
@@ -32,6 +35,9 @@ export interface Request {
 	status: string;
 	submissionDate: string;
 	citizenId: string;
+	adminMessage?: string;
+	processedAt?: string;
+	processedBy?: string;
 	appointment?: {
 		id: string;
 		dateTime: string;
@@ -52,6 +58,11 @@ export interface Request {
 		fileSize?: number;
 		mimeType?: string;
 	};
+}
+
+export interface UpdateRequestStatusData {
+	status: string;
+	adminMessage?: string;
 }
 
 export interface FilterRequestParams {
@@ -138,6 +149,15 @@ export const requestApi = {
 		const response = await apiClient.delete(
 			`/mup/documents/file/${encodeURIComponent(fileUrl)}`
 		);
+		return response.data;
+	},
+
+	// Update request status (Admin only)
+	updateRequestStatus: async (
+		id: string,
+		data: UpdateRequestStatusData
+	): Promise<Request> => {
+		const response = await apiClient.put(`/mup/request/${id}/status`, data);
 		return response.data;
 	},
 };

@@ -13,6 +13,8 @@ import {
 	Tooltip,
 	message,
 	Spin,
+	Modal,
+	Input,
 } from 'antd';
 import {
 	FileSearchOutlined,
@@ -24,25 +26,35 @@ import {
 	FilePdfOutlined,
 	FileWordOutlined,
 	FileImageOutlined,
+	EditOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	requestApi,
 	type Request,
 	type FilterRequestParams,
+	type UpdateRequestStatusData,
 } from '../../api/request.api';
 import { citizenApi, type Citizen } from '../../api/citizen.api';
+import { useAuth } from '../auth';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
+const { TextArea } = Input;
+
 export const RequestsPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [form] = Form.useForm();
+	const [statusForm] = Form.useForm();
 	const [filters, setFilters] = useState<FilterRequestParams>({});
 	const [loadingDocument, setLoadingDocument] = useState<string | null>(null);
+	const [statusModalVisible, setStatusModalVisible] = useState(false);
+	const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+	const queryClient = useQueryClient();
+	const { user } = useAuth();
 
 	// Fetch all citizens for filter dropdown
 	const { data: allCitizens = [] } = useQuery({
@@ -61,6 +73,24 @@ export const RequestsPage: React.FC = () => {
 		queryFn: () => requestApi.filterRequests(filters),
 	});
 
+	// Mutation for updating request status
+	const updateStatusMutation = useMutation({
+		mutationFn: ({ id, data }: { id: string; data: UpdateRequestStatusData }) =>
+			requestApi.updateRequestStatus(id, data),
+		onSuccess: () => {
+			message.success('Status zahteva je uspešno ažuriran');
+			// Invalidate both queries to ensure data is refreshed
+			queryClient.invalidateQueries({ queryKey: ['requests'] });
+			queryClient.invalidateQueries({ queryKey: ['filteredRequests'] });
+			setStatusModalVisible(false);
+			setSelectedRequest(null);
+			statusForm.resetFields();
+		},
+		onError: () => {
+			message.error('Greška prilikom ažuriranja statusa');
+		},
+	});
+
 	const handleFilter = () => {
 		const formValues = form.getFieldsValue();
 		setFilters(formValues);
@@ -69,6 +99,26 @@ export const RequestsPage: React.FC = () => {
 	const handleClearFilters = () => {
 		form.resetFields();
 		setFilters({});
+	};
+
+	const handleStatusChange = (record: Request) => {
+		setSelectedRequest(record);
+		statusForm.setFieldsValue({
+			status: record.status,
+			adminMessage: record.adminMessage || '',
+		});
+		setStatusModalVisible(true);
+	};
+
+	const handleStatusSubmit = () => {
+		statusForm.validateFields().then((values) => {
+			if (selectedRequest) {
+				updateStatusMutation.mutate({
+					id: selectedRequest.id,
+					data: values,
+				});
+			}
+		});
 	};
 
 	const getStatusColor = (status: string) => {
@@ -139,8 +189,27 @@ export const RequestsPage: React.FC = () => {
 			dataIndex: 'status',
 			key: 'status',
 			width: 120,
-			render: (status: string) => (
-				<Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+			render: (status: string, record: Request) => (
+				<Space direction='vertical' size='small'>
+					<Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+					{record.adminMessage && (
+						<Tooltip title={record.adminMessage}>
+							<Text
+								type='secondary'
+								style={{
+									fontSize: '12px',
+									maxWidth: 100,
+									display: 'block',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								💬 {record.adminMessage}
+							</Text>
+						</Tooltip>
+					)}
+				</Space>
 			),
 		},
 		{
@@ -349,6 +418,26 @@ export const RequestsPage: React.FC = () => {
 				);
 			},
 		},
+		{
+			title: 'Akcije',
+			key: 'actions',
+			width: 120,
+			render: (record: Request) => {
+				// Only admins can change status
+				if (user?.role !== 'ADMIN') return null;
+
+				return (
+					<Button
+						type='link'
+						size='small'
+						icon={<EditOutlined />}
+						onClick={() => handleStatusChange(record)}
+					>
+						Promeni status
+					</Button>
+				);
+			},
+		},
 	];
 
 	return (
@@ -505,6 +594,85 @@ export const RequestsPage: React.FC = () => {
 						}}
 					/>
 				</Card>
+
+				{/* Status Update Modal */}
+				<Modal
+					title='Promeni status zahteva'
+					open={statusModalVisible}
+					onOk={handleStatusSubmit}
+					onCancel={() => {
+						setStatusModalVisible(false);
+						setSelectedRequest(null);
+						statusForm.resetFields();
+					}}
+					confirmLoading={updateStatusMutation.isPending}
+					okText='Sačuvaj'
+					cancelText='Otkaži'
+					width={600}
+				>
+					{selectedRequest && (
+						<Space direction='vertical' size='middle' style={{ width: '100%' }}>
+							<div>
+								<Text strong>Broj predmeta: </Text>
+								<Text>{selectedRequest.caseNumber}</Text>
+							</div>
+							<div>
+								<Text strong>Trenutni status: </Text>
+								<Tag color={getStatusColor(selectedRequest.status)}>
+									{getStatusText(selectedRequest.status)}
+								</Tag>
+							</div>
+							{selectedRequest.adminMessage && (
+								<div>
+									<Text strong>Trenutna poruka: </Text>
+									<Text type='secondary'>{selectedRequest.adminMessage}</Text>
+								</div>
+							)}
+
+							<Form
+								form={statusForm}
+								layout='vertical'
+								style={{ marginTop: 16 }}
+							>
+								<Form.Item
+									name='status'
+									label='Novi status'
+									rules={[
+										{ required: true, message: 'Molimo izaberite status' },
+									]}
+								>
+									<Select placeholder='Izaberite status'>
+										<Option value='CREATED'>Kreiran</Option>
+										<Option value='IN_PROCESS'>U toku</Option>
+										<Option value='APPROVED'>Odobren</Option>
+										<Option value='REJECTED'>Odbijen</Option>
+										<Option value='COMPLETED'>Završen</Option>
+									</Select>
+								</Form.Item>
+
+								<Form.Item
+									name='adminMessage'
+									label='Poruka za građanina'
+									tooltip='Ova poruka će biti vidljiva građaninu'
+									rules={[
+										{
+											required:
+												statusForm.getFieldValue('status') === 'REJECTED',
+											message: 'Poruka je obavezna za odbijene zahteve',
+										},
+									]}
+								>
+									<TextArea
+										rows={4}
+										placeholder='Unesite poruku za građanina (razlog odbijanja, dodatne informacije, itd.)'
+										maxLength={500}
+										showCount
+									/>
+								</Form.Item>
+							</Form>
+						</Space>
+					)}
+				</Modal>
 			</Space>
 		</div>
 	);

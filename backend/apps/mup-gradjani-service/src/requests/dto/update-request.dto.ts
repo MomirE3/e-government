@@ -15,12 +15,15 @@ export enum RequestStatus {
 
 export type UpdateRequestDto = {
   id: string;
-  caseNumber: string;
-  type: RequestType;
-  status: RequestStatus;
-  submissionDate: string;
-  citizenId: string;
-  appointment: any;
-  payment: any;
-  document: any;
+  caseNumber?: string;
+  type?: RequestType;
+  status?: RequestStatus;
+  submissionDate?: string;
+  citizenId?: string;
+  adminMessage?: string;
+  processedAt?: string;
+  processedBy?: string;
+  appointment?: any;
+  payment?: any;
+  document?: any;
 };

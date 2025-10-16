@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { UpdateRequestStatusDto } from './dto/update-request-status.dto';
 import { RequestsRepository } from './requests.repository';
 import { FilterRequestDto } from './dto/filter-request.dto';
 
@@ -29,6 +30,15 @@ export class RequestsService {
 
   update(id: string, updateRequestDto: UpdateRequestDto) {
     return this.requestsRepository.update(id, updateRequestDto);
+  }
+
+  updateStatus(id: string, updateStatusDto: UpdateRequestStatusDto) {
+    return this.requestsRepository.updateStatus(
+      id,
+      updateStatusDto.status,
+      updateStatusDto.adminMessage,
+      updateStatusDto.processedBy,
+    );
   }
 
   remove(id: string) {

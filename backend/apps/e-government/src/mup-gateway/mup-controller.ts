@@ -31,6 +31,7 @@ import { Role } from '../auth/enums/role.enum';
 import type { AuthUser } from '../auth/interfaces/auth-user.interface';
 import type { CreateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/create-request.dto';
 import type { UpdateRequestDto } from 'apps/mup-gradjani-service/src/requests/dto/update-request.dto';
+import type { UpdateRequestStatusDto } from 'apps/mup-gradjani-service/src/requests/dto/update-request-status.dto';
 import type { CreateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/create-appointment.dto';
 import type { UpdateAppointmentDto } from 'apps/mup-gradjani-service/src/appointment/dto/update-appointment.dto';
 import type { CreatePaymentDto } from 'apps/mup-gradjani-service/src/payment/dto/create-payment.dto';
@@ -208,6 +209,24 @@ export class MupController {
   @Roles(Role.ADMIN, Role.CITIZEN)
   updateRequest(@Param('id') id: string, @Body() body: UpdateRequestDto) {
     return this.mupService.send('updateRequest', { id, body });
+  }
+
+  @Put('request/:id/status')
+  @Roles(Role.ADMIN)
+  updateRequestStatus(
+    @Param('id') id: string,
+    @Body() body: UpdateRequestStatusDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    // Add admin ID to the request
+    const updateData = {
+      ...body,
+      processedBy: user.id,
+    };
+    return this.mupService.send('updateRequestStatus', {
+      id,
+      body: updateData,
+    });
   }
 
   @Delete('request/:id')

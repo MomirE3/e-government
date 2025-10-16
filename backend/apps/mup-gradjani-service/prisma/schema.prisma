@@ -83,6 +83,9 @@ model Request {
   type           RequestType
   status         RequestStatus
   submissionDate DateTime      @default(now())
+  adminMessage   String?       // Poruka od admina (razlog odbijanja ili poruka odobrenja)
+  processedAt    DateTime?     // Datum obrade zahteva
+  processedBy    String?       // ID admina koji je obradio zahtev
 
   // Foreign keys
   citizenId String

@@ -24,6 +24,9 @@ export type Request = {
   status: RequestStatus;
   submissionDate: string;
   citizenId: string;
+  adminMessage?: string;
+  processedAt?: string;
+  processedBy?: string;
   appointment: Appointment;
   payment: Payment;
   document: Document;

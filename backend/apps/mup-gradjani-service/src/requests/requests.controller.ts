@@ -2,6 +2,7 @@ import { Controller, Body } from '@nestjs/common';
 import { RequestsService } from './requests.service';
 import type { CreateRequestDto } from './dto/create-request.dto';
 import type { UpdateRequestDto } from './dto/update-request.dto';
+import type { UpdateRequestStatusDto } from './dto/update-request-status.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import type { FilterRequestDto } from './dto/filter-request.dto';
 
@@ -40,6 +41,11 @@ export class RequestsController {
   @MessagePattern('updateRequest')
   update(data: { id: string; body: UpdateRequestDto }) {
     return this.requestsService.update(data.id, data.body);
+  }
+
+  @MessagePattern('updateRequestStatus')
+  updateStatus(data: { id: string; body: UpdateRequestStatusDto }) {
+    return this.requestsService.updateStatus(data.id, data.body);
   }
 
   @MessagePattern('removeRequest')

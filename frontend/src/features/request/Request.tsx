@@ -107,7 +107,7 @@ export const Request: React.FC = () => {
 		switch (status) {
 			case 'CREATED':
 				return 'blue';
-			case 'IN_PROGRESS':
+			case 'IN_PROCESS':
 				return 'orange';
 			case 'APPROVED':
 				return 'green';
@@ -124,8 +124,8 @@ export const Request: React.FC = () => {
 		switch (status) {
 			case 'CREATED':
 				return 'Kreiran';
-			case 'IN_PROGRESS':
-				return 'U obradi';
+			case 'IN_PROCESS':
+				return 'U toku';
 			case 'APPROVED':
 				return 'Odobren';
 			case 'REJECTED':
@@ -170,9 +170,31 @@ export const Request: React.FC = () => {
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
-			width: 100,
-			render: (status: string) => (
-				<Tag color={getStatusColor(status)}>{getStatusLabel(status)}</Tag>
+			width: 150,
+			render: (
+				status: string,
+				record: CreateRequestData & { id: string; adminMessage?: string }
+			) => (
+				<Space direction='vertical' size='small'>
+					<Tag color={getStatusColor(status)}>{getStatusLabel(status)}</Tag>
+					{record.adminMessage && (
+						<Tooltip title={record.adminMessage}>
+							<Text
+								type='secondary'
+								style={{
+									fontSize: '12px',
+									maxWidth: 130,
+									display: 'block',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								💬 {record.adminMessage}
+							</Text>
+						</Tooltip>
+					)}
+				</Space>
 			),
 		},
 		{
